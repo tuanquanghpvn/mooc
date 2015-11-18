@@ -1,0 +1,69 @@
+{% extends 'layout/base.html' %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
+{% block content %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <h1>Log In</h1>
+        <h3>Already a Member? Log in here.</h3>
+        <form method="POST" action="{% url 'students:login' %}" role="form" name="login-form" id="login-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-group text-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-group {{ form.username.errors|yesno:'has-error,' }}" id="login-login-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                <div class="input-group">
+                    <input type="text" name="{{ form.username.html_name }}" class="form-control" id="{{ form.username.id_for_label }}" placeholder="Username" value="{{ form.username.value|default:'' }}">
+                    <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                </div>
+
+                {% if form.username.help_text %}
+                <div class="input-group">
+                    <span id="help_text_{{ form.username.id_for_label }}" class="help-block">{{ form.username.help_text }}</span>
+                </div>
+                {% endif %}
+                {% if form.username.errors %}
+                <div class="input-group">
+                    <div class="text-danger">
+                        {{ form.username.errors }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group {{ form.password.errors|yesno:'has-error,' }}" id="login-password-group">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                <div class="input-group">
+                    <input type="password" name="{{ form.password.html_name }}" class="form-control" id="{{ form.password.id_for_label }}">
+                    <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                </div>
+
+                {% if form.password.help_text %}
+                <div class="input-group">
+                    <span id="help_text_{{ form.password.id_for_label }}" class="help-block">{{ form.password.help_text }}</span>
+                </div>
+                {% endif %}
+                {% if form.password.errors %}
+                <div class="input-group">
+                    <div class="text-danger">
+                        {{ form.password.errors }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Log In</button>
+            <a href="#" class="pull-right">Lost your password?</a>
+        </form>
+    </div>
+{% endblock content %}

@@ -21,8 +21,11 @@ class Describable(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 primary_key=True, related_name='profile')
-    avatar = models.ImageField(upload_to='avatars')
+    avatar = models.ImageField(upload_to='avatars', default='', blank=True)
     modified_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'user_profile'
 
     def get_avatar_url(self):
         if self.avatar:
