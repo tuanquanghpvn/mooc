@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="{% static 'frontend/images/favicon.png' %}">
     <!-- Main Stylesheet -->
     <link href="{% static 'frontend/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet">
     
     {% block cssfiles %}
     {% endblock cssfiles %}
@@ -29,8 +30,8 @@
         <div class="tools">
             <div class="container">
                 <ul class="pull-left">
-                    <li><a href="tel:1800123456"><i class="fa fa-phone"></i><span>1800-123-456</span></a></li>
-                    <li><a href="mailto:info@smartway.com"><i class="fa fa-envelope"></i><span>info@smartway.com</span></a></li>
+                    <li><a href="tel:0918612485"><i class="fa fa-phone"></i><span>091.861.2485</span></a></li>
+                    <li><a href="mailto:khanhnn@pythonvietnam.info"><i class="fa fa-envelope"></i><span>khanhnn@pythonvietnam.info</span></a></li>
                 </ul>
                 <nav class="pull-right">
                     {% if user.is_authenticated %}
@@ -87,14 +88,14 @@
     </header>
     <!-- ========== HEADER END ========== -->
     <!-- ========== TITLE START ========== -->
-    <div class="title">
+    <!--<div class="title">
         <div class="title-image"></div>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 text-center">{{ page_title }}</div>
             </div>
         </div>
-    </div>
+    </div>-->
     <!-- ========== TITLE END ========== -->
     {% block precontent %}
     {% endblock precontent %}
@@ -346,12 +347,9 @@
                 <!-- ==== CONTACT START == -->
                 <div class="col-sm-3">
                     <h3>Contact</h3>
-                    <p>Smartway Learning Centre
-                        <br> 8699 Santa Monica Blvd
-                        <br> Los Angeles, CA 90069-4109</p>
-                    <p>Phone: <a href="tel:1800123456">1800-123-456</a>
-                        <br> Fax: <a href="tel:1800123456">1800-123-456</a>
-                        <br> Email: <a href="mailto:info@smartway.com">info@smartway.com</a></p>
+                    <p>Dong Da, Ha Noi</p>
+                        <p>Phone: <a href="tel: 0918612485"> 091.861.2485</a>
+                        <br> Email: <a href="mailto:khanhnn@pythonvietnam.info">khanhnn@pythonvietnam.info</a></p>
                     <p><a href="{% url 'contact:index' %}">Get Directions <i class="fa fa-angle-right"></i></a></p>
                 </div>
                 <!-- ==== CONTACT END == -->
