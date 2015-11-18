@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load staticfiles %}
+{% load subjects_tag %}
 
 {% block sidebar %}
 <!-- ==== SIDEBAR START == -->
@@ -114,20 +115,22 @@ lectus pulvinar.<br>
         {# <h3>Tasks</h3> #}
         {% for task in subject.latest_session.tasks.all %}
             {% if task.is_published %}
-                <h5 class="lesson-title"><a href="#">{{ task.name }}</a></h5>
+                <h5 class="lesson-title"><a href="{% url 'subjects:task' task.id %}">{{ task.name }}</a></h5>
                 <div class="meta">
                     <span><i class="fa fa-clock-o"></i>From: {{ task.start_date|date:'D d M Y' }}</span>
                     <span><i class="fa fa-clock-o"></i>To: {{ task.end_date|date:'D d M Y' }}</span>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <img width="100%" src="https://i.ytimg.com/vi/D48iCw3WWpI/mqdefault.jpg">
+                        <a href="{% url 'subjects:task' task.id %}">
+                            <img width="100%" src="https://i.ytimg.com/vi/{{ task.link_youtube|get_youtube_id }}/mqdefault.jpg">
+                        </a>
                     </div>
                     <div class="col-md-8">
-                        <p style="text-align: justify;">{{ task.content }}</p>
+                        <p style="text-align: justify;">{{ task.content|truncatechars:200 }}</p>
 
                         <p>
-                            <a href="#">Learn >></a>                            
+                            <a href="{% url 'subjects:task' task.id %}">Learn >></a>
                         </p>
                     </div>                    
                 </div>
@@ -154,73 +157,10 @@ lectus pulvinar.<br>
                             <span><i class="fa fa-calendar"></i>{{ review.modified_date|date:'D d M Y' }}</span>
                             <span><i class="fa fa-linux"></i>Rating: {{ review.rating }}/5</span>
                         </p>
-                        <p>{{ review.content }}</p>
-                        
-                        {% comment %}
-                        <div class="media" data-scroll-reveal>
-                            <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment2.jpg' %}" alt="" /></a>
-                            <div class="media-body">
-                                <h5 class="media-heading">Jane Doe<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
-                                <p class="meta">
-                                    <span><i class="fa fa-calendar"></i>April 27th, 2014</span>
-                                </p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam hendrerit id nisi non varius. Aliquam erat volutpat. Pellentesque in dolor vel tortor placerat rutrum. Aenean suscipit lacus nec adipiscing tristique. Mauris semper aliquam purus eu tempor. Etiam gravida, lorem vel imperdiet ullamcorper, est mauris lacinia elit, ut sollicitudin tellus erat et felis. Vestibulum id rhoncus sapien. Mauris scelerisque imperdiet mollis. Nullam eu volutpat urna, quis facilisis metus.</p>
-
-                                <div class="media" data-scroll-reveal>
-                                    <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment3.jpg' %}" alt="" /></a>
-                                    <div class="media-body">
-                                        <h5 class="media-heading">John Doe<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
-                                        <p class="meta">
-                                            <span><i class="fa fa-calendar"></i>April 27th, 2014</span>
-                                        </p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam hendrerit id nisi non varius. Aliquam erat volutpat. Pellentesque in dolor vel tortor placerat rutrum. Aenean suscipit lacus nec adipiscing tristique. Mauris semper aliquam purus eu tempor. Etiam gravida, lorem vel imperdiet ullamcorper, est mauris lacinia elit, ut sollicitudin tellus erat et felis. Vestibulum id rhoncus sapien. Mauris scelerisque imperdiet mollis. Nullam eu volutpat urna, quis facilisis metus.</p>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        {% endcomment %}
-
+                        <p>{{ review.content }}</p>                    
                     </div>
                 </li>
                 {% endfor %}
-
-                {% comment %}
-                <li class="media" data-scroll-reveal>
-                    <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment4.jpg' %}" alt="" /></a>
-                    <div class="media-body">
-                        <h5 class="media-heading">Jane Doe<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
-                        <p class="meta">
-                            <span><i class="fa fa-calendar"></i>April 27th, 2014</span>
-                        </p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam hendrerit id nisi non varius. Aliquam erat volutpat. Pellentesque in dolor vel tortor placerat rutrum. Aenean suscipit lacus nec adipiscing tristique. Mauris semper aliquam purus eu tempor. Etiam gravida, lorem vel imperdiet ullamcorper, est mauris lacinia elit, ut sollicitudin tellus erat et felis. Vestibulum id rhoncus sapien. Mauris scelerisque imperdiet mollis. Nullam eu volutpat urna, quis facilisis metus.</p>
-
-                        <div class="media" data-scroll-reveal>
-                            <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment5.jpg' %}" alt="" /></a>
-                            <div class="media-body">
-                                <h5 class="media-heading">John Doe<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
-                                <p class="meta">
-                                    <span><i class="fa fa-calendar"></i>April 27th, 2014</span>
-                                </p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam hendrerit id nisi non varius. Aliquam erat volutpat. Pellentesque in dolor vel tortor placerat rutrum. Aenean suscipit lacus nec adipiscing tristique. Mauris semper aliquam purus eu tempor. Etiam gravida, lorem vel imperdiet ullamcorper, est mauris lacinia elit, ut sollicitudin tellus erat et felis. Vestibulum id rhoncus sapien. Mauris scelerisque imperdiet mollis. Nullam eu volutpat urna, quis facilisis metus.</p>
-
-                                <div class="media" data-scroll-reveal>
-                                    <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment6.jpg' %}" alt="" /></a>
-                                    <div class="media-body">
-                                        <h5 class="media-heading">John Doe<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
-                                        <p class="meta">
-                                            <span><i class="fa fa-calendar"></i>April 27th, 2014</span>
-                                        </p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam hendrerit id nisi non varius. Aliquam erat volutpat. Pellentesque in dolor vel tortor placerat rutrum. Aenean suscipit lacus nec adipiscing tristique. Mauris semper aliquam purus eu tempor. Etiam gravida, lorem vel imperdiet ullamcorper, est mauris lacinia elit, ut sollicitudin tellus erat et felis. Vestibulum id rhoncus sapien. Mauris scelerisque imperdiet mollis. Nullam eu volutpat urna, quis facilisis metus.</p>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </li>
-                {% endcomment %}
             </ul>
         </div>
     </div>

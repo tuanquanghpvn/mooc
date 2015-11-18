@@ -199,11 +199,10 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group {{ task_form.link_youtube.errors|yesno:'has-error,,' }}">
+                                    <div class="form-group">
                                         <label for="inputName" class="col-sm-2 control-label">Youtube</label>
                                         <div class="col-sm-10">
-                                            <input type="text" value="{{ task_form.link_youtube.value|default:'' }}" class="form-control" name="{{ task_form.link_youtube.html_name }}" />
-                                            <span class="help-block">{{ task_form.link_youtube.errors }}</span>
+                                            <input type="text" value="" class="form-control" name="link_youtube" />
                                         </div>
                                     </div>
                                     
@@ -253,7 +252,7 @@
                                     <th style="width: 10px">#</th>
                                     <th>Session</th>
                                     <th>Name</th>
-                                    <th>Content</th>
+                                    <th>Youtube</th>
                                     <th class="text-center" style="width: 200px">Action</th>
                                 </tr>
                                 {% for task in tasks %}
@@ -261,7 +260,9 @@
                                         <td>{{ task.id }}.</td>
                                         <td>{{ task.session.start_date|date:'d/m/Y' }} - {{ task.session.end_date|date:'d/m/Y' }}.</td>
                                         <td>{{ task.name }}</td>
-                                        <td>{{ task.content }}</td>                                    
+                                        <td>
+                                            <a target="_blank" href="{{ task.link_youtube }}">{{ task.link_youtube }}</a>
+                                        </td>                                    
                                         <td class="text-center">                                        
                                             <a href="#" data-href="{% url 'admin:delete_task' task.id %}" data-toggle="modal" data-target="#confirm-delete">
                                                 <span class="badge bg-red">Delete</span>

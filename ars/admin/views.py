@@ -318,7 +318,6 @@ class CommonContextSubject(object):
                                 ).order_by('-id')
         return context
 
-
 class CreateTaskSubmit(TeacherRequiredMixin, CommonContextSubject,
                         SingleObjectMixin, FormView):
     form_class = forms.TaskForm
@@ -338,7 +337,6 @@ class CreateTaskSubmit(TeacherRequiredMixin, CommonContextSubject,
     def form_invalid(self, form):
         return self.render_to_response(
                     self.get_context_data(task_form=form))
-
 
 class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
                             SingleObjectMixin, FormView):
@@ -360,7 +358,6 @@ class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
         return self.render_to_response(
                     self.get_context_data(session_form=form))
 
-
 class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
     task_form = forms.TaskForm
     session_form = forms.SessionForm
@@ -379,9 +376,7 @@ class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
         try:
             return view(request, *args, **kwargs)
         except NameError as err:
-            print(err.strerror)
             return super().post(request, *args, **kwargs)
-
 
 class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for SubjectDeleteView"""

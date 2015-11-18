@@ -130,7 +130,7 @@ MEDIA_URL = '/media/'
 LOGIN_URL = reverse_lazy('students:login')
 
 ###########################################
-DEFAULT_IMAGE = '/media/default_image.jpg'
+DEFAULT_IMAGE = '/media/default_image.png'
 
 ###########################################
 BLOG_DIR = 'blog'

@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, View, FormVie
 from django.views.generic.detail import SingleObjectMixin
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 
-from ars.subjects.models import Subject
+from ars.subjects.models import Subject, Task
 from ars.core.views import LoginRequiredMixin, BaseView, StudentRequiredMixin
 from ars.subjects.models import Enroll
 from ars.reviews.forms import ReviewSubjectForm
@@ -119,3 +119,19 @@ class EnrollSubjectView(StudentRequiredMixin, CreateView):
         form.instance.student = self.request.user.profile.student
         self.object = form.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class DetailTaskView(StudentRequiredMixin, BaseView, DetailView):
+    model = Task
+    template_name = 'subjects/task.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        info = {
+            'info': {
+                'title': self.object.name,
+                },
+            'page_title': self.object.name,
+        }
+        context.update(info)
+        return context

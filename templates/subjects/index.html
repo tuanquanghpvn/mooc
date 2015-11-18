@@ -19,7 +19,7 @@
                             <h3><a href="{% url 'subjects:detail' subject.pk %}">{{ subject.name }}</a></h3>
                             <div class="meta">
                                 <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' subject.course.creator.pk %}">{{ subject.course.creator.profile.user.username }}</a></span>
-                                <span><i class="fa fa-file-text"></i>{{ subject.latest_session.task.all|length }} tasks</span>
+                                <span><i class="fa fa-file-text"></i>{{ subject.latest_session.tasks.all|length }} tasks</span>
                                 <span><i class="fa fa-folder"></i>
                                     {% for category in subject.categories.all %}
                                     <a href="{% url 'category:index' category.pk %}">{{ category }}</a> &nbsp;

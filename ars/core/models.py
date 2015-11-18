@@ -24,6 +24,11 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='avatars')
     modified_date = models.DateTimeField(auto_now=True)
 
+    def get_avatar_url(self):
+        if self.avatar:
+            return self.avatar.url
+        return settings.DEFAULT_IMAGE
+
     @property
     def is_teacher(self):
         if hasattr(self, 'teacher'):
