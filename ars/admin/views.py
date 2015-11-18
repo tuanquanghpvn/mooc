@@ -423,7 +423,8 @@ class SessionCreateView(TeacherRequiredMixin, CreateView):
 class TaskCreateView(TeacherRequiredMixin, CreateView):
     """docstring for TaskCreateView"""
     model = Task
-    fields = ['session', 'name', 'slug', 'content', 'start_date', 'end_date']
+    fields = ['session', 'name', 'slug', 'content', 'start_date', 
+                'end_date', 'image', 'link_youtube']
 
     def get_context_data(self, **kwargs):
         context = super(TaskCreateView, self).get_context_data(**kwargs)
@@ -441,7 +442,6 @@ class TaskCreateView(TeacherRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         self.session = form.cleaned_data['session']
-        print(form.errors)
         messages.add_message(self.request, messages.INFO, "All fields is required")
         return HttpResponseRedirect(self.get_success_url())
 

@@ -30,7 +30,7 @@ class Blog(Timestampable):
     def get_image_url(self):
         if self.image:
             return self.image.url
-        return ''
+        return settings.DEFAULT_IMAGE
 
     def __str__(self):
         return self.title

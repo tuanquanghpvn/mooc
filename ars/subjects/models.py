@@ -21,7 +21,7 @@ class Subject(Describable, Timestampable):
     def get_image_url(self):
         if self.image:
             return self.image.url
-        return ''
+        return settings.DEFAULT_IMAGE
 
     def __str__(self):
         return self.name
@@ -33,7 +33,6 @@ class Subject(Describable, Timestampable):
         except:
             session = None
         return session
-
 
 class Session(models.Model):
     subject = models.ForeignKey(Subject, related_name='sessions')
@@ -54,6 +53,7 @@ class Task(Describable):
     content = models.TextField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    link_youtube = models.URLField(max_length=255, default='', blank=False)
 
     class Meta:
         verbose_name = "Task"
@@ -62,6 +62,11 @@ class Task(Describable):
 
     def __str__(self):
         return 'Task {}'.format(self.name)
+
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return settings.DEFAULT_IMAGE
     
     @property
     def is_published(self):

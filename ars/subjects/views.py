@@ -34,7 +34,7 @@ class DetailSubjectMixin(object):
     template_name = 'subjects/detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)        
 
         if hasattr(self.request.user, 'profile') and \
            hasattr(self.request.user.profile, 'student'):

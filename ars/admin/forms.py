@@ -6,6 +6,8 @@ from ars.subjects.models import Subject
 from ars.core.models import UserProfile
 from ars.subjects.models import Task, Session
 
+import re
+
 class SubjectForm(forms.ModelForm):
     """docstring for SubjectForm"""
     class Meta:
@@ -47,20 +49,38 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('session', 'name', 'slug',
-                    'content', 'start_date', 'end_date')
+                    'content', 'start_date', 'end_date',
+                    'link_youtube')
+
+    def youtube_url_validation(self, url):
+        youtube_regex = (
+            r'(https?://)?(www\.)?'
+            '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+            '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
+        )
+
+        youtube_regex_match = re.match(youtube_regex, url)
+        if youtube_regex_match:
+            return youtube_regex_match.group(6)
+
+        return False
 
     def clean(self):
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date', False)
         end_date = cleaned_data.get('end_date', False)
+        link_youtube = cleaned_data.get('link_youtube', False)
 
         if start_date and end_date and start_date > end_date:
             msg = "'End date' must be later than 'Start date'"
             self.add_error('start_date', msg)
             self.add_error('end_date', msg)
 
-        return cleaned_data
+        if link_youtube and not self.youtube_url_validation(link_youtube):
+            msg = "Youtube link not validate"
+            self.add_error('link_youtube', msg)
 
+        return cleaned_data    
 
 class SessionForm(forms.ModelForm):
 

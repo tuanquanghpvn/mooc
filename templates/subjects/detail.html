@@ -24,7 +24,7 @@
             </li>
             <li class="course-data">
                 <span class="icon icon-038"></span>
-                <span class="pull-right">4 lessons</span>
+                <span class="pull-right">{{ subject.latest_session.tasks.all|length }} tasks</span>
             </li>
             <li class="course-data">
                 <span class="icon icon-036"></span>
@@ -111,74 +111,30 @@ lectus pulvinar.<br>
     <p>{{ subject.description }}</p>    
     {% if has_enrolled %}
     <hr>
-        <h3>Tasks</h3>
+        {# <h3>Tasks</h3> #}
         {% for task in subject.latest_session.tasks.all %}
             {% if task.is_published %}
-            <h5 class="lesson-title"><a href="#">{{ task.name }}</a></h5>
-            <div class="meta">
-                <span><i class="fa fa-clock-o"></i>From: {{ task.start_date|date:'D d M Y' }}</span>
-                <span><i class="fa fa-clock-o"></i>To: {{ task.end_date|date:'D d M Y' }}</span>
-            </div>
-            <p>{{ task.content }}</p>
-            <hr>
+                <h5 class="lesson-title"><a href="#">{{ task.name }}</a></h5>
+                <div class="meta">
+                    <span><i class="fa fa-clock-o"></i>From: {{ task.start_date|date:'D d M Y' }}</span>
+                    <span><i class="fa fa-clock-o"></i>To: {{ task.end_date|date:'D d M Y' }}</span>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <img width="100%" src="https://i.ytimg.com/vi/D48iCw3WWpI/mqdefault.jpg">
+                    </div>
+                    <div class="col-md-8">
+                        <p style="text-align: justify;">{{ task.content }}</p>
+
+                        <p>
+                            <a href="#">Learn >></a>                            
+                        </p>
+                    </div>                    
+                </div>
+                <hr>
             {% endif %}
         {% endfor %}
-    {% endif %}
-    {% comment %}
-    <h3>Lessons</h3>
-    <h5 class="lesson-title"><a href="#">Donec porta nulla volutpat interdum porta</a></h5>
-    <div class="meta">
-        <span><i class="fa fa-clock-o"></i>12 Minutes</span>
-        <span><i class="fa fa-dashboard"></i>Easy</span>
-    </div>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Praesent sit amet pharetra nunc, non scelerisque ligula. Cras vel justo 
-nulla. Vestibulum a sollicitudin metus, faucibus fermentum leo. Nulla ut
-purus vel nunc ultricies dignissim at at nunc. Vivamus tempor eget 
-lorem non commodo.</p>
-    <hr>
-    <h5 class="lesson-title"><a href="#">Donec porta nulla volutpat interdum porta</a></h5>
-    <div class="meta">
-        <span><i class="fa fa-clock-o"></i>12 Minutes</span>
-        <span><i class="fa fa-dashboard"></i>Easy</span>
-    </div>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Praesent sit amet pharetra nunc, non scelerisque ligula. Cras vel justo 
-nulla. Vestibulum a sollicitudin metus, faucibus fermentum leo. Nulla ut
-purus vel nunc ultricies dignissim at at nunc. Vivamus tempor eget 
-lorem non commodo.</p>
-    <hr>
-    <h5 class="lesson-title"><a href="#">Donec porta nulla volutpat interdum porta</a></h5>
-    <div class="meta">
-        <span><i class="fa fa-clock-o"></i>12 Minutes</span>
-        <span><i class="fa fa-dashboard"></i>Easy</span>
-    </div>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Praesent sit amet pharetra nunc, non scelerisque ligula. Cras vel justo 
-nulla. Vestibulum a sollicitudin metus, faucibus fermentum leo. Nulla ut
-purus vel nunc ultricies dignissim at at nunc. Vivamus tempor eget 
-lorem non commodo.</p>
-    <hr>
-    <h5 class="lesson-title"><a href="#">Donec porta nulla volutpat interdum porta</a></h5>
-    <div class="meta">
-        <span><i class="fa fa-clock-o"></i>12 Minutes</span>
-        <span><i class="fa fa-dashboard"></i>Easy</span>
-    </div>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Praesent sit amet pharetra nunc, non scelerisque ligula. Cras vel justo 
-nulla. Vestibulum a sollicitudin metus, faucibus fermentum leo. Nulla ut
-purus vel nunc ultricies dignissim at at nunc. Vivamus tempor eget 
-lorem non commodo.</p>
-    <hr>
-    <div data-scroll-reveal-initialized="true" style="-webkit-transform: translatey(24px);transform: translatey(24px);opacity: 0;-webkit-transition: -webkit-transform 0.66s ease-in-out 0s,  opacity 0.66s ease-in-out 0s;transition: transform 0.66s ease-in-out 0s,  opacity 0.66s ease-in-out 0s;-webkit-perspective: 1000;-webkit-backface-visibility: hidden;" class="row" data-scroll-reveal="">
-        <div class="col-sm-6">
-            <a class="btn btn-primary lesson-prev"><i class="fa fa-caret-left"></i> &nbsp; Previous Course Title</a>
-        </div>
-        <div class="col-sm-6 text-right">
-            <a class="btn btn-primary lesson-next">Next Course Title &nbsp; <i class="fa fa-caret-right"></i></a>
-        </div>
-    </div>
-    {% endcomment %}
+    {% endif %}    
 
     <!-- ==== COMMENTS START ==== -->
     {% if subject.reviews.exists %}
@@ -191,7 +147,9 @@ lorem non commodo.</p>
                 <li class="media">
                     <a class="pull-left media-photo" href="#"><img class="media-object img-responsive" src="{% static 'frontend/images/comment1.jpg' %}" alt="" /></a>
                     <div class="media-body">
-                        <h5 class="media-heading">{{ review.student.username }}<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a></h5>
+                        <h5 class="media-heading">{{ review.student.username }}
+                            <!--<a href="#" class="pull-right"><i class="fa fa-reply"></i>Reply</a>-->
+                        </h5>
                         <p class="meta">
                             <span><i class="fa fa-calendar"></i>{{ review.modified_date|date:'D d M Y' }}</span>
                             <span><i class="fa fa-linux"></i>Rating: {{ review.rating }}/5</span>
