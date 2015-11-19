@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import render
 from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.admin.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import (
         FormView, View, CreateView, DetailView,
@@ -31,7 +32,7 @@ class AdminRequiredMixin(object):
     """docstring for AdminRequiredMixin"""
     @method_decorator(permission_required('is_superuser', login_url='/admin/login/'))
     def dispatch(self, request, *args, **kwargs):
-        return super(AdminRequiredMixin, self).dispatch(request, *args, **kwargs)    
+        return super(AdminRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 class TeacherRequiredMixin(object):
     """docstring for TeacherRequiredMixin"""
@@ -59,6 +60,8 @@ class LoginView(FormView):
             return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
+        if self.request.user.profile.is_teacher:
+            return reverse_lazy('admin:list_course')    
         return reverse_lazy('admin:dashboard')
 
     def form_valid(self, form):
@@ -66,7 +69,7 @@ class LoginView(FormView):
         login(self.request, admin)
         return super().form_valid(form)
 
-class DashboardView(TeacherRequiredMixin, TemplateView):
+class DashboardView(AdminRequiredMixin, TemplateView):
     template_name = 'admin/dashboard_index.html'
 
     def get_context_data(self, **kwargs):
@@ -77,6 +80,36 @@ class DashboardView(TeacherRequiredMixin, TemplateView):
         }
         context['info'] = info
         return context
+
+class ChangePasswordView(TeacherRequiredMixin, FormView):
+    form_class = PasswordChangeForm
+    template_name = 'admin/profile.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        info = {
+            'title': 'Change Password',
+        }
+        context['info'] = info
+        return context
+    
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        if self.request.user.profile.is_teacher:
+            return reverse_lazy('admin:list_course')
+        return reverse_lazy('admin:dashboard')
 
 # Categories Management
 
@@ -270,7 +303,7 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
     form_class = forms.SubjectForm
 
     def get(self, request, *args, **kwargs):
-        self.object = None
+        self.object = self.get_object()
         form = self.get_form()
         form.fields['courses'] = djforms.ModelChoiceField(
                     queryset=Course.objects.filter(teachers__profile__user=self.request.user))
