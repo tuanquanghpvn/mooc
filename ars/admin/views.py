@@ -571,10 +571,12 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
         user.set_password(password)
         user.save()
 
-        profile = UserProfile.objects.create(user=user)
-        profile.save()
-        teacher = Teacher.objects.create(profile=profile)
+        teacher = Teacher.objects.create(profile=user.profile)
         teacher.save()
+        
+        student = Student.objects.get(profile=user.profile)
+        student.delete()
+
         return super(TeacherCreateView, self).form_valid(form)
 
     def get_success_url(self):

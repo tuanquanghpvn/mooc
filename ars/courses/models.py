@@ -21,7 +21,7 @@ class Course(Timestampable, Describable):
             teacher = Teacher.objects.filter(courses=self
                                     ).filter(teachercourse__is_creator=True
                                     ).get()
-        except MultipleObjectsReturned as err:
+        except MultipleObjectsReturned:
             teacher = self.teachers[0]
         
         return teacher
