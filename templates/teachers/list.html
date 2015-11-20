@@ -50,9 +50,9 @@
             
             {% for teacher in teacher_list %}
             <li class="col-lg-3 col-md-4 col-sm-6">
-                <img src="{{ teacher.get_avatar_url }}" alt="No image" class="img-responsive" />
+                <img src="{{ teacher.avatar }}" alt="No image" class="img-responsive" />
                 <div class="description">
-                    <h3>{{ teacher.username }}</h3>
+                    <h3>{{ teacher.full_name }}</h3>
                     <p>Non ipsum vulputate condimentum eu id tellus. Praesent commodo arcu quis rhoncus porttitor.</p>
                     <a href="{% url 'teachers:detail' teacher.pk %}">Read More <i class="fa fa-angle-right"></i></a>
                 </div>

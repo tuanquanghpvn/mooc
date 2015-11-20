@@ -19,7 +19,17 @@ class Teacher(models.Model):
         return self.profile.user.username
 
     @property
+    def full_name(self):
+        try:
+            if self.profile.user.get_full_name():
+                return self.profile.user.get_full_name()
+            else:
+                return self.profile.user.username
+        except:
+            return self.profile.user.username
+
+    @property
     def avatar(self):
         if self.profile.avatar:
             return self.profile.avatar.url
-        return None
+        return settings.DEFAULT_IMAGE 
