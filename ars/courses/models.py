@@ -21,6 +21,8 @@ class Course(Timestampable, Describable):
             teacher = Teacher.objects.filter(teachercourse__course=self
                                     ).filter(teachercourse__is_creator=True
                                     ).get()
+            print("Vao day")
+            print(teacher)
         except MultipleObjectsReturned:
             teacher = self.teachers[0]
         

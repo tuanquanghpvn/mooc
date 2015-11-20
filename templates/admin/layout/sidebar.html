@@ -16,7 +16,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>            
-            {% if user.is_superuser %}
+            {% if request.user.is_superuser %}
                 <li class="{% if 'dashboard' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:dashboard' %}">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
@@ -39,7 +39,7 @@
                 </li>                
             {% endif %}
 
-            {% if not user.is_superuser %}
+            {% if not request.user.is_superuser %}
                 <li class="{% if 'course' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:list_course' %}">
                     <i class="fa fa-archive"></i> <span>Course</span>

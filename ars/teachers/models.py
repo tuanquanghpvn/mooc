@@ -7,6 +7,8 @@ from ars.core.models import UserProfile
 class Teacher(models.Model):
     profile = models.OneToOneField(UserProfile,
                                 default=None, related_name='teacher')
+    description = models.TextField(blank=True, default='')
+    info = models.TextField(blank=True, default='')
 
     class Meta:
         db_table = 'teacher'

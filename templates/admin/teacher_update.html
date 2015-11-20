@@ -10,12 +10,12 @@
     <section class="content-header">
         <h1>
             Teacher
-            <small>Create</small>
+            <small>Update</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
             <li><a href="/admin/teacher">Teacher</a></li>
-            <li class="active">Create</li>
+            <li class="active">Update</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -47,13 +47,13 @@
 
                             <div class="form-group {% if form.password.errors %} has-error {% endif %}">
                                 <label for="{{ form.password.id_for_label }}">Password:</label>
-                                <input name="{{ form.password.name }}" type="password" class="form-control" value="{{ form.password.value|default_if_none:"" }}" placeholder="Enter password">
+                                <input name="{{ form.password.name }}" type="password" class="form-control" value="" placeholder="Enter password">
                                 <span class="help-block">{{ form.password.errors }}</span>
                             </div>
 
                             <div class="form-group {% if form.re_password.errors %} has-error {% endif %}">
                                 <label for="{{ form.re_password.id_for_label }}">Re Password:</label>
-                                <input name="{{ form.re_password.name }}" type="password" class="form-control" value="{{ form.re_password.value|default_if_none:"" }}" placeholder="Enter re password">
+                                <input name="{{ form.re_password.name }}" type="password" class="form-control" value="" placeholder="Enter re password">
                                 <span class="help-block">{{ form.re_password.errors }}</span>
                             </div>
 

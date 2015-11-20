@@ -29,10 +29,13 @@ class SubjectForm(forms.ModelForm):
 
 class TeacherForm(forms.ModelForm):
     re_password = forms.CharField(max_length=500)
+    description = forms.CharField(required=False)
+    info = forms.CharField(required=False)
+    avatar = forms.ImageField(required=False, max_length=255)
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'password',)
+        fields = ('username', 'first_name', 'last_name', 'password', 'email')
 
     def clean(self):
         cleaned_data = super(TeacherForm, self).clean()
@@ -43,6 +46,25 @@ class TeacherForm(forms.ModelForm):
             msg = "Password not contrain."
             self.add_error('re_password', msg)
 
+class TeacherUpdateForm(forms.ModelForm):
+    password = forms.CharField(max_length=500, required=False)
+    re_password = forms.CharField(max_length=500, required=False)
+    description = forms.CharField(required=False)
+    info = forms.CharField(required=False)
+    avatar = forms.ImageField(required=False, max_length=255)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        re_password = cleaned_data.get("re_password")
+
+        if password != re_password:
+            msg = "Password not contrain."
+            self.add_error('re_password', msg)
 
 class TaskForm(forms.ModelForm):
 

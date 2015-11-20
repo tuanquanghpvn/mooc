@@ -599,18 +599,74 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
 
     def form_valid(self, form):        
         password = form.cleaned_data['password']
+        description = form.cleaned_data.get('description', None)
+        info = form.cleaned_data.get('info', None)
+        avatar = form.cleaned_data['avatar']
+
         user = form.save(commit=False)
         user.is_staff = True
         user.set_password(password)
         user.save()
+        
+        user.profile.avatar = avatar
+        user.profile.save()
 
         teacher = Teacher.objects.create(profile=user.profile)
+        teacher.info = info
+        teacher.description = description
         teacher.save()
         
         student = Student.objects.get(profile=user.profile)
         student.delete()
 
         return super(TeacherCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('admin:list_teacher')
+
+class TeacherUpdateView(AdminRequiredMixin, UpdateView):
+    """docstring for TeacherUpdateView"""
+    template_name = "admin/teacher_update.html"
+    model = User
+    form_class = forms.TeacherUpdateForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        user_object = self.get_object()
+        initial['description'] = user_object.profile.teacher.description
+        initial['info'] = user_object.profile.teacher.info
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        info = {
+            'title': 'Update Teacher - TMS',
+            'sidebar': ['teacher']
+        }
+        context['info'] = info
+        return context
+
+    def form_valid(self, form):
+        password = form.cleaned_data.get('password', None)
+        description = form.cleaned_data.get('description', None)
+        info = form.cleaned_data.get('info', None)
+        avatar = form.cleaned_data.get('avatar', None)
+
+        user = form.instance
+
+        if password:
+            user.set_password(password)
+
+        if avatar:
+           user.profile.avatar = avatar
+           user.profile.save()
+
+        teacher = Teacher.objects.get(profile=user.profile) 
+        teacher.info = info
+        teacher.description = description
+        teacher.save()
+
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('admin:list_teacher')

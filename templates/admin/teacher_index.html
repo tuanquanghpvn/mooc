@@ -30,6 +30,7 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
+                                <th>Avatar</th>
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Date Join</th>
@@ -40,14 +41,20 @@
                                 <tr>
                                     <td>{{ item.profile.user.id }}.</td>
                                     <td>
+                                        <img src="{{ item.profile.get_avatar_url }}" width="35px" height="35px">
+                                    </td>
+                                    <td>
                                         <span>{{ item.profile.user.username }}</span>
                                         <!-- <a href="/admin/user/detail?id={{ item.profile.user.id }}">
                                         </a> -->
                                     </td>
                                     <td>{{ item.profile.user.email }}</td>
                                     <td>{{ item.profile.user.date_joined|date:'d/m/Y' }}</td>
-                                    <td>{{ item.profile.user.last_login|date:'d/m/Y H:M:s' }}</td>
+                                    <td>{{ item.profile.user.last_login|date:'d/m/Y H:m:s' }}</td>
                                     <td class="text-center">
+                                        <a href="{% url 'admin:update_teacher' item.profile.user.id %}">
+                                            <span class="badge">Update</span>
+                                        </a>                                        
                                         <a href="#" data-href="{% url 'admin:delete_teacher' item.profile.user.id %}" data-toggle="modal" data-target="#confirm-delete">
                                             <span class="badge bg-red">Delete</span>
                                         </a>

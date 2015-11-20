@@ -88,17 +88,12 @@
         <h3>Teacher</h3>
         <div class="teacher row">
             <div class="col-sm-12">
-                <a href="{% url 'teachers:detail' teacher.pk %}"><img src="{% static 'frontend/images/thumb-teacher.jpg' %}" alt="Avatar not availabe" class="pull-left"></a>
-                <h5><a href="{% url 'teachers:detail' teacher.pk %}">{{ teacher.profile.user.username }}</a></h5>
-                <p>Web Design</p>
+                <a href="{% url 'teachers:detail' teacher.pk %}"><img src="{{ teacher.get_avatar_url }}" alt="Avatar not availabe" class="pull-left"></a>
+                <h5><a href="{% url 'teachers:detail' teacher.pk %}">{{ teacher.full_name }}</a></h5>
+                <p>{{ teacher.profile.user.username }}</p>
             </div>
         </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Praesent sit amet pharetra nunc, non scelerisque ligula. Cras vel justo 
-nulla. Vestibulum a sollicitudin metus, faucibus fermentum leo. Nulla ut
-purus vel nunc ultricies dignissim at at nunc. Vivamus tempor eget 
-lorem non commodo. Vivamus mattis massa in ipsum molestie, eu aliquet 
-lectus pulvinar.<br>
+        <p>{{ teacher.description }}.<br>
     <a href="{% url 'teachers:detail' teacher.pk %}">Read More <i class="fa fa-angle-right"></i></a></p>
     </div>
     {% endfor %}
