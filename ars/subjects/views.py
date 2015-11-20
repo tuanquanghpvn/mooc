@@ -21,7 +21,7 @@ class ListSubjectView(BaseView, ListView):
         context = super().get_context_data(**kwargs)
         info = {
             'info': {
-                'title': 'Subjects List',
+                'title': 'Course Bridge',
                 },
             'page_title': 'Subjects List',
         }
@@ -55,7 +55,7 @@ class DetailSubjectMixin(object):
 
         info = {
             'info': {
-                'title': 'Subject Detail',
+                'title': self.object.name,
                 },
             'page_title': 'Subject',
         }
