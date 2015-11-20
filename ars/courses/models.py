@@ -17,15 +17,13 @@ class Course(Timestampable, Describable):
 
     @property
     def creator(self):
-        try:
-            teacher = Teacher.objects.filter(teachercourse__course=self
-                                    ).filter(teachercourse__is_creator=True
-                                    ).get()
-        except MultipleObjectsReturned:
-            teacher = self.teachers[0]
-        teacher = self.teachers[0]
-        return teacher
-
+        # try:
+        #     teacher = Teacher.objects.filter(teachercourse__course=self
+        #                             ).filter(teachercourse__is_creator=True
+        #                             ).get()
+        # except MultipleObjectsReturned:
+        #     teacher = self.teachers[0]
+        return self.teachers.first
 
 class TeacherCourse(models.Model):
     teacher = models.ForeignKey(Teacher)
