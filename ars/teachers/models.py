@@ -18,7 +18,10 @@ class Teacher(models.Model):
 
     @property
     def username(self):
-        return self.profile.user.username
+        try:
+            return self.profile.user.username
+        except:
+            return ''
 
     @property
     def full_name(self):
