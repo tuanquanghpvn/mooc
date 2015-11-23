@@ -291,26 +291,33 @@
                 <!-- ==== APPLY FOR TEACHER START == -->
                 <div class="col-sm-3">
                     <h3>Apply for a Teacher</h3>
-                    <form role="form" name="teacher-form" id="teacher-form" action="process-teacher.php">
+                    <form action="{% url 'teachers:create' %}" method="POST">
+                        {% csrf_token %}                        
+
+                        <input type="hidden" name="cur_url" value="{{ request.path }}">
                         <div class="form-group" id="teacher-name-group">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="teacher-input-name" placeholder="Name">
+                                <input type="text" class="form-control" name="full_name" placeholder="Name">
                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                             </div>
                         </div>
                         <div class="form-group" id="teacher-email-group">
                             <div class="input-group">
-                                <input type="email" class="form-control" id="teacher-input-email" placeholder="Email">
+                                <input type="email" class="form-control" name="email" placeholder="Email">
                                 <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
                             </div>
                         </div>
                         <div class="form-group" id="teacher-phone-group">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="teacher-input-phone" placeholder="Phone">
+                                <input type="text" class="form-control" name="phone" placeholder="Phone">
                                 <div class="input-group-addon"><i class="fa fa-phone"></i></div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+
+                        {% for msg in messages %}
+                            <span style="margin-left: 10px;" class="text-warning">{{ msg }}</span>
+                        {% endfor %}
                     </form>
                 </div>
                 <!-- ==== APPLY FOR TEACHER END == -->

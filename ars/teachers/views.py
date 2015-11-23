@@ -1,8 +1,26 @@
-from django.views.generic import DetailView, ListView
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.views.generic import DetailView, ListView, CreateView
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.contrib import messages
 
 from ars.core.views import BaseView
-from ars.teachers.models import Teacher
+from ars.teachers.models import Teacher, ApplyForATeacher
 
+class CreateTeacherApplyView(BaseView, CreateView):
+    model = ApplyForATeacher
+    fields = ('full_name', 'email', 'phone')
+
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(self.request, messages.INFO, "Apply Teacher Success !")
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.add_message(self.request, messages.ERROR, "Apply Teacher Error !")
+        return HttpResponseRedirect(self.get_success_url())        
+
+    def get_success_url(self):
+        return reverse_lazy('home')
 
 class DetailTeacherView(BaseView, DetailView):
     model = Teacher

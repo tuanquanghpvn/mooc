@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-from ars.core.models import UserProfile
+from ars.core.models import UserProfile, Timestampable
 
 
 class Teacher(models.Model):
@@ -38,3 +38,14 @@ class Teacher(models.Model):
         if self.profile.avatar:
             return self.profile.avatar.url
         return settings.DEFAULT_IMAGE 
+
+class ApplyForATeacher(Timestampable):
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.full_name
+
+    class Meta:
+        db_table = 'apply_for_a_teacher'

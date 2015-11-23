@@ -80,6 +80,10 @@ urlpatterns = [
     url(r'^teacher/delete/(?P<pk>[0-9]+)/$', views.TeacherDeleteView.as_view(), 
                                                     name='delete_teacher'),
 
+    url(r'^teacher-apply/$', views.ApplyForATeacherView.as_view(), name='list_teacher_apply'),
+    url(r'^teacher-apply/delete/(?P<pk>[0-9]+)/$', views.ApplyForATeacherDeleteView.as_view(), 
+                                                    name='delete_teacher_apply'),
+
     #############################################################
     #############################################################
     #############################################################

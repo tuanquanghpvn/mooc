@@ -21,7 +21,7 @@ from ars.courses.models import Course, TeacherCourse
 from ars.subjects.models import Subject, Session, Task, Enroll
 from ars.reviews.models import Review
 from ars.blog.models import Blog
-from ars.teachers.models import Teacher
+from ars.teachers.models import Teacher, ApplyForATeacher
 from ars.students.models import Student
 from ars.core.models import UserProfile
 
@@ -182,6 +182,7 @@ class CourseView(TeacherRequiredMixin, ListView):
     model = Course
     context_object_name = 'list_course'
     template_name = 'admin/course_index.html'
+    paginate_by = 10
 
     def get_queryset(self):
         return Course.objects.filter(
@@ -257,6 +258,7 @@ class SubjectView(TeacherRequiredMixin, ListView):
     model = Subject
     context_object_name = 'list_subject'
     template_name = 'admin/subject_index.html'
+    paginate_by = 10
 
     def get_queryset(self):
         return Subject.objects.filter(
@@ -497,6 +499,7 @@ class BlogView(TeacherRequiredMixin, ListView):
     model = Blog
     context_object_name = 'list_blog'
     template_name = 'admin/blog_index.html'
+    paginate_by = 10
 
     def get_queryset(self):
         return Blog.objects.filter(teacher=self.request.user.profile.teacher).order_by('-id')
@@ -681,15 +684,47 @@ class TeacherDeleteView(AdminRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('admin:list_teacher')
 
+# Apply For A Teacher Management
+
+class ApplyForATeacherView(AdminRequiredMixin, ListView):
+    """docstring for ApplyForATeacherView"""
+    model = ApplyForATeacher
+    context_object_name = 'list_teacher_apply'
+    template_name = 'admin/teacher_apply_index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ApplyForATeacher.objects.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplyForATeacherView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Apply For A Teacher - TMS',
+            'sidebar': ['apply']
+        }
+        context['info'] = info
+        return context
+
+class ApplyForATeacherDeleteView(AdminRequiredMixin, DeleteView):
+    """docstring for ApplyForATeacherDeleteView"""
+    model = ApplyForATeacher
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('admin:list_teacher_apply')
+
 # Student Management
 
 class StudentView(AdminRequiredMixin, ListView):
     """docstring for StudentView"""
     context_object_name = 'list_student'
     template_name = 'admin/student_index.html'
+    paginate_by = 10
 
     def get_queryset(self):
-        return Student.objects.all()
+        return Student.objects.order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(StudentView, self).get_context_data(**kwargs)
