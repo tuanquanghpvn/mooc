@@ -62,6 +62,8 @@ INSTALLED_APPS = [
 
     # ... include the providers you want to enable:
     'allauth.socialaccount.providers.facebook',
+
+    'captcha',
 ]
 
 SITE_ID = 1
@@ -171,3 +173,9 @@ BLOG_DIR = 'blog'
 SUBJECT_DIR = 'subjects'
 TEACHER_DIR = 'teachers'
 TASK_DIR = 'tasks'
+
+#################################################
+RECAPTCHA_PUBLIC_KEY = '6Lc3Vw8TAAAAAGXlR5pu9NYdWKRIGAFR9D6HFw7z'
+RECAPTCHA_PRIVATE_KEY = '6Lc3Vw8TAAAAAAgE51VQSHMfDnStwsQJBly_pEz0'
+NOCAPTCHA = True
+RECAPTCHA_USE_SSL = True

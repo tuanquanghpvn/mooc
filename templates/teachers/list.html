@@ -22,16 +22,26 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <h1>Meet our staff</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eu tellus ipsum. Nunc maximus sapien ac dui vulputate tincidunt. Morbi luctus nisi vel suscipit volutpat. Donec vitae auctor nisl. Ut malesuada felis in erat rutrum ultrices. Fusce iaculis ornare nunc rutrum ornare. Proin ut placerat enim, vel venenatis urna. Phasellus sed diam tincidunt mauris malesuada mattis et in nisl. Quisque massa eros, molestie at mi eget, aliquam tristique eros. Nullam aliquet placerat magna ut eleifend. Phasellus iaculis tristique laoreet.</p>
-                <ul>
-                    <li>Fusce iaculis ornare nunc rutrum ornare.</li>
-                    <li>Proin ut placerat enim, vel venenatis urna.</li>
-                    <li>Phasellus sed diam tincidunt mauris malesuada mattis et in nisl.</li>
-                    <li>Quisque massa eros, molestie at mi eget, aliquam tristique eros.</li>
-                    <li>Nullam aliquet placerat magna ut eleifend.</li>
-                    <li>Phasellus iaculis tristique laoreet.</li>
-                </ul>
+                <h1>Apply Teacher</h1>
+                <form method="POST" action="{% url 'teachers:create' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Fullname <span class="text-danger">(*)</span></label>
+                        <input class="form-control" placeholder="Enter fullname" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Email <span class="text-danger">(*)</span></label>
+                        <input class="form-control" placeholder="Enter email" type="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone <span class="text-danger">(*)</span></label>
+                        <input class="form-control" placeholder="Enter phone" type="text">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    {% for msg in messages %}
+                        <span style="margin-left: 10px;" class="text-danger">{{ msg }}</span>
+                    {% endfor %}
+                </form>
             </div>
         </div>
     </div>
