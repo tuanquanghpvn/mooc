@@ -2,13 +2,23 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, CreateView
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib import messages
+from django import forms
+from captcha.fields import ReCaptchaField
 
 from ars.core.views import BaseView
 from ars.teachers.models import Teacher, ApplyForATeacher
 
+class TeacherApplyForm(forms.ModelForm):
+    """docstring for TeacherApplyForm"""
+    # captcha = ReCaptchaField()
+
+    class Meta:
+        model = ApplyForATeacher
+        fields = ('full_name', 'email', 'phone')
+
 class CreateTeacherApplyView(BaseView, CreateView):
     model = ApplyForATeacher
-    fields = ('full_name', 'email', 'phone')
+    form_class = TeacherApplyForm
 
     def form_valid(self, form):
         form.save()
@@ -20,7 +30,7 @@ class CreateTeacherApplyView(BaseView, CreateView):
         return HttpResponseRedirect(self.get_success_url())        
 
     def get_success_url(self):
-        return reverse_lazy('home')
+        return reverse_lazy('teachers:index')
 
 class DetailTeacherView(BaseView, DetailView):
     model = Teacher
