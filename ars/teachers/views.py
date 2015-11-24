@@ -22,7 +22,7 @@ class CreateTeacherApplyView(BaseView, CreateView):
 
     def form_valid(self, form):
         form.save()
-        messages.add_message(self.request, messages.INFO, "Apply Teacher Success !")
+        messages.add_message(self.request, messages.INFO, "Apply Teacher Success ! Thanks for support !")
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
