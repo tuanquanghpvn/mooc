@@ -4,9 +4,9 @@ from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.admin.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import (
-        FormView, View, CreateView, DetailView,
-        UpdateView, DeleteView, TemplateView, ListView,
-    )
+    FormView, View, CreateView, DetailView,
+    UpdateView, DeleteView, TemplateView, ListView,
+)
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required, login_required
@@ -15,7 +15,6 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django import forms as djforms
-
 from ars.categories.models import Category
 from ars.courses.models import Course, TeacherCourse
 from ars.subjects.models import Subject, Session, Task, Enroll
@@ -24,28 +23,34 @@ from ars.blog.models import Blog
 from ars.teachers.models import Teacher, ApplyForATeacher
 from ars.students.models import Student
 from ars.core.models import UserProfile
-
 from . import forms
+
 
 # Create your views here.
 class AdminRequiredMixin(object):
     """docstring for AdminRequiredMixin"""
+
     @method_decorator(permission_required('is_superuser', login_url='/admin/login/'))
     def dispatch(self, request, *args, **kwargs):
         return super(AdminRequiredMixin, self).dispatch(request, *args, **kwargs)
 
+
 class TeacherRequiredMixin(object):
     """docstring for TeacherRequiredMixin"""
+
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+
 class LoginRequiredMixin(object):
     """docstring for LoginRequiredMixin"""
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
-        
+
+
 # Login and dashborad Management
 
 class LoginView(FormView):
@@ -61,13 +66,14 @@ class LoginView(FormView):
 
     def get_success_url(self):
         if self.request.user.profile.is_teacher:
-            return reverse_lazy('admin:list_course')    
+            return reverse_lazy('admin:list_course')
         return reverse_lazy('admin:dashboard')
 
     def form_valid(self, form):
         admin = form.get_user()
         login(self.request, admin)
         return super().form_valid(form)
+
 
 class DashboardView(AdminRequiredMixin, TemplateView):
     template_name = 'admin/dashboard_index.html'
@@ -80,6 +86,7 @@ class DashboardView(AdminRequiredMixin, TemplateView):
         }
         context['info'] = info
         return context
+
 
 class ChangePasswordView(TeacherRequiredMixin, FormView):
     form_class = PasswordChangeForm
@@ -97,7 +104,7 @@ class ChangePasswordView(TeacherRequiredMixin, FormView):
         }
         context['info'] = info
         return context
-    
+
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
@@ -110,6 +117,7 @@ class ChangePasswordView(TeacherRequiredMixin, FormView):
         if self.request.user.profile.is_teacher:
             return reverse_lazy('admin:list_course')
         return reverse_lazy('admin:dashboard')
+
 
 # Categories Management
 
@@ -127,6 +135,7 @@ class CategoryView(AdminRequiredMixin, ListView):
         }
         context['info'] = info
         return context
+
 
 class CategoryCreateView(AdminRequiredMixin, CreateView):
     """docstring for CategoryCreateView"""
@@ -146,9 +155,10 @@ class CategoryCreateView(AdminRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('admin:list_category')
 
+
 class CategoryUpdateView(AdminRequiredMixin, UpdateView):
     """docstring for CategoryUpdateView"""
-    model = Category 
+    model = Category
     template_name = 'admin/category_update.html'
     fields = ['name', 'description']
 
@@ -164,6 +174,7 @@ class CategoryUpdateView(AdminRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('admin:list_category')
 
+
 class CategoryDeleteView(AdminRequiredMixin, DeleteView):
     """docstring for CategoryDeleteView"""
     model = Category
@@ -173,7 +184,7 @@ class CategoryDeleteView(AdminRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('admin:list_category')
-        
+
 
 # Courses Management
 
@@ -186,7 +197,7 @@ class CourseView(TeacherRequiredMixin, ListView):
 
     def get_queryset(self):
         return Course.objects.filter(
-                teachers=self.request.user.profile.teacher).order_by('-id')
+            teachers=self.request.user.profile.teacher).order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(CourseView, self).get_context_data(**kwargs)
@@ -196,6 +207,7 @@ class CourseView(TeacherRequiredMixin, ListView):
         }
         context['info'] = info
         return context
+
 
 class CourseCreateView(TeacherRequiredMixin, CreateView):
     """docstring for CourseCreateView"""
@@ -215,16 +227,17 @@ class CourseCreateView(TeacherRequiredMixin, CreateView):
     def form_valid(self, form):
         course = form.save()
         TeacherCourse.objects.create(
-                                teacher=self.request.user.profile.teacher,
-                                course=course, is_creator=True)
+            teacher=self.request.user.profile.teacher,
+            course=course, is_creator=True)
         return super(CourseCreateView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('admin:list_course')
 
+
 class CourseUpdateView(TeacherRequiredMixin, UpdateView):
     """docstring for CourseUpdateView"""
-    model = Course 
+    model = Course
     template_name = 'admin/course_update.html'
     fields = ['name', 'description']
 
@@ -239,6 +252,7 @@ class CourseUpdateView(TeacherRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('admin:list_course')
+
 
 class CourseDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for CourseDeleteView"""
@@ -262,7 +276,7 @@ class SubjectView(TeacherRequiredMixin, ListView):
 
     def get_queryset(self):
         return Subject.objects.filter(
-                course__teachers=self.request.user.profile.teacher).order_by('-id')
+            course__teachers=self.request.user.profile.teacher).order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(SubjectView, self).get_context_data(**kwargs)
@@ -272,6 +286,7 @@ class SubjectView(TeacherRequiredMixin, ListView):
         }
         context['info'] = info
         return context
+
 
 class SubjectCreateView(TeacherRequiredMixin, CreateView):
     """docstring for SubjectCreateView"""
@@ -283,7 +298,7 @@ class SubjectCreateView(TeacherRequiredMixin, CreateView):
         self.object = None
         form = self.get_form()
         form.fields['courses'] = djforms.ModelChoiceField(
-                    queryset=Course.objects.filter(teachers__profile__user=self.request.user))
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user))
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
@@ -298,9 +313,10 @@ class SubjectCreateView(TeacherRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('admin:list_subject')
 
+
 class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
     """docstring for SubjectUpdateView"""
-    model = Subject 
+    model = Subject
     template_name = 'admin/subject_update.html'
     form_class = forms.SubjectForm
 
@@ -308,9 +324,9 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
         self.object = self.get_object()
         form = self.get_form()
         form.fields['courses'] = djforms.ModelChoiceField(
-                    queryset=Course.objects.filter(teachers__profile__user=self.request.user))
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user))
         return self.render_to_response(self.get_context_data(form=form))
-        
+
     def get_context_data(self, **kwargs):
         context = super(SubjectUpdateView, self).get_context_data(**kwargs)
         info = {
@@ -323,8 +339,9 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('admin:list_subject')
 
+
 class CommonContextSubject(object):
-    model = Subject 
+    model = Subject
     template_name = 'admin/subject_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -338,28 +355,29 @@ class CommonContextSubject(object):
         context['info'] = info
 
         context['reviews'] = Review.objects.filter(
-                                    subject=self.object, 
-                                    subject__course__teachers=teacher
-                                    ).order_by('-id')
+            subject=self.object,
+            subject__course__teachers=teacher
+        ).order_by('-id')
 
         context['sessions'] = Session.objects.filter(subject=self.object)
 
         context['tasks'] = Task.objects.filter(session__subject=self.object,
-                                session__subject__course__teachers=teacher
-                                ).order_by('-id')
+                                               session__subject__course__teachers=teacher
+                                               ).order_by('-id')
 
         context['endrolls'] = Enroll.objects.filter(session__subject=self.object,
-                                session__subject__course__teachers=teacher
-                                ).order_by('-id')
+                                                    session__subject__course__teachers=teacher
+                                                    ).order_by('-id')
         return context
 
+
 class CreateTaskSubmit(TeacherRequiredMixin, CommonContextSubject,
-                        SingleObjectMixin, FormView):
+                       SingleObjectMixin, FormView):
     form_class = forms.TaskForm
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject' ,
-                            kwargs={ 'pk': self.object.pk })
+        return reverse_lazy('admin:detail_subject',
+                            kwargs={'pk': self.object.pk})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -371,15 +389,16 @@ class CreateTaskSubmit(TeacherRequiredMixin, CommonContextSubject,
 
     def form_invalid(self, form):
         return self.render_to_response(
-                    self.get_context_data(task_form=form))
+            self.get_context_data(task_form=form))
+
 
 class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
-                            SingleObjectMixin, FormView):
+                          SingleObjectMixin, FormView):
     form_class = forms.SessionForm
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject' ,
-                            kwargs={ 'pk': self.object.pk })
+        return reverse_lazy('admin:detail_subject',
+                            kwargs={'pk': self.object.pk})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -391,7 +410,8 @@ class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
 
     def form_invalid(self, form):
         return self.render_to_response(
-                    self.get_context_data(session_form=form))
+            self.get_context_data(session_form=form))
+
 
 class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
     task_form = forms.TaskForm
@@ -413,6 +433,7 @@ class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
         except NameError as err:
             return super().post(request, *args, **kwargs)
 
+
 class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for SubjectDeleteView"""
     model = Subject
@@ -422,6 +443,7 @@ class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('admin:list_subject')
+
 
 # Sessions Management
 
@@ -435,26 +457,27 @@ class SessionCreateView(TeacherRequiredMixin, CreateView):
         start_date = form.cleaned_data['start_date']
         end_date = form.cleaned_data['end_date']
         if end_date < start_date:
-            messages.add_message(self.request, messages.INFO, { 'id': 'session', 'msg': 'End date need > start date'})
+            messages.add_message(self.request, messages.INFO, {'id': 'session', 'msg': 'End date need > start date'})
             return HttpResponseRedirect(self.get_success_url())
         self.object = form.save()
         return super(SessionCreateView, self).form_valid(form)
 
     def form_invalid(self, form):
         self.subject = form.cleaned_data['subject']
-        messages.add_message(self.request, messages.INFO, { 'id': 'session', 'msg': 'All fields is required'})
+        messages.add_message(self.request, messages.INFO, {'id': 'session', 'msg': 'All fields is required'})
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject', kwargs={ 'pk': self.subject.pk })
-        
+        return reverse_lazy('admin:detail_subject', kwargs={'pk': self.subject.pk})
+
+
 # Task Management
 
 class TaskCreateView(TeacherRequiredMixin, CreateView):
     """docstring for TaskCreateView"""
     model = Task
-    fields = ['session', 'name', 'slug', 'content', 'start_date', 
-                'end_date', 'image', 'link_youtube']
+    fields = ['session', 'name', 'slug', 'content', 'start_date',
+              'end_date', 'image', 'link_youtube']
 
     def get_context_data(self, **kwargs):
         context = super(TaskCreateView, self).get_context_data(**kwargs)
@@ -476,7 +499,8 @@ class TaskCreateView(TeacherRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject' , kwargs={ 'pk': self.session.subject.pk })
+        return reverse_lazy('admin:detail_subject', kwargs={'pk': self.session.subject.pk})
+
 
 class TaskDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for TaskDeleteView"""
@@ -487,10 +511,11 @@ class TaskDeleteView(TeacherRequiredMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(TaskDeleteView, self).post(request)    
+        return super(TaskDeleteView, self).post(request)
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject', kwargs={ 'pk': self.object.session.subject.pk })
+        return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.session.subject.pk})
+
 
 # Blogs Management
 
@@ -512,6 +537,7 @@ class BlogView(TeacherRequiredMixin, ListView):
         }
         context['info'] = info
         return context
+
 
 class BlogCreateView(TeacherRequiredMixin, CreateView):
     """docstring for BlogCreateView"""
@@ -537,9 +563,10 @@ class BlogCreateView(TeacherRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('admin:list_blog')
 
+
 class BlogUpdateView(TeacherRequiredMixin, UpdateView):
     """docstring for BlogUpdateView"""
-    model = Blog 
+    model = Blog
     template_name = 'admin/blog_update.html'
     fields = ['title', 'description', 'slug', 'content', 'image']
 
@@ -554,6 +581,7 @@ class BlogUpdateView(TeacherRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('admin:list_blog')
+
 
 class BlogDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for BlogDeleteView"""
@@ -585,6 +613,7 @@ class TeacherView(AdminRequiredMixin, ListView):
         context['info'] = info
         return context
 
+
 class TeacherCreateView(AdminRequiredMixin, CreateView):
     """docstring for TeacherCreateView"""
     template_name = "admin/teacher_create.html"
@@ -600,7 +629,7 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
         context['info'] = info
         return context
 
-    def form_valid(self, form):        
+    def form_valid(self, form):
         password = form.cleaned_data['password']
         description = form.cleaned_data.get('description', None)
         info = form.cleaned_data.get('info', None)
@@ -610,7 +639,7 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
         user.is_staff = True
         user.set_password(password)
         user.save()
-        
+
         user.profile.avatar = avatar
         user.profile.save()
 
@@ -618,7 +647,7 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
         teacher.info = info
         teacher.description = description
         teacher.save()
-        
+
         student = Student.objects.get(profile=user.profile)
         student.delete()
 
@@ -626,6 +655,7 @@ class TeacherCreateView(AdminRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('admin:list_teacher')
+
 
 class TeacherUpdateView(AdminRequiredMixin, UpdateView):
     """docstring for TeacherUpdateView"""
@@ -661,10 +691,10 @@ class TeacherUpdateView(AdminRequiredMixin, UpdateView):
             user.set_password(password)
 
         if avatar:
-           user.profile.avatar = avatar
-           user.profile.save()
+            user.profile.avatar = avatar
+            user.profile.save()
 
-        teacher = Teacher.objects.get(profile=user.profile) 
+        teacher = Teacher.objects.get(profile=user.profile)
         teacher.info = info
         teacher.description = description
         teacher.save()
@@ -673,6 +703,7 @@ class TeacherUpdateView(AdminRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('admin:list_teacher')
+
 
 class TeacherDeleteView(AdminRequiredMixin, DeleteView):
     """docstring for TeacherDeleteView"""
@@ -683,6 +714,7 @@ class TeacherDeleteView(AdminRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('admin:list_teacher')
+
 
 # Apply For A Teacher Management
 
@@ -705,6 +737,7 @@ class ApplyForATeacherView(AdminRequiredMixin, ListView):
         context['info'] = info
         return context
 
+
 class ApplyForATeacherDeleteView(AdminRequiredMixin, DeleteView):
     """docstring for ApplyForATeacherDeleteView"""
     model = ApplyForATeacher
@@ -714,6 +747,7 @@ class ApplyForATeacherDeleteView(AdminRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('admin:list_teacher_apply')
+
 
 # Student Management
 
@@ -734,6 +768,7 @@ class StudentView(AdminRequiredMixin, ListView):
         }
         context['info'] = info
         return context
+
 
 class StudentDeleteView(AdminRequiredMixin, DeleteView):
     """docstring for StudentDeleteView"""

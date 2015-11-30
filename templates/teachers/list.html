@@ -60,17 +60,15 @@
             
             {% for teacher in teacher_list %}
             <li class="col-lg-3 col-md-4 col-sm-6">
-                <img src="{{ teacher.avatar }}" alt="No image" class="img-responsive" width="100%" height="250px" />
+                <img style="max-height: 250px;" src="{{ teacher.avatar }}" alt="No image" class="img-responsive" width="100%" height="250px" />
                 <div class="description">
                     <h3>{{ teacher.full_name }}</h3>
-                    <p>{{ teacher.description }}.</p>
+                    <p>{{ teacher.description }}</p>
                     <a href="{% url 'teachers:detail' teacher.pk %}">Read More <i class="fa fa-angle-right"></i></a>
                 </div>
             </li>
             {% endfor %}
-
         </ul>
-
     </div>
 </section>
 

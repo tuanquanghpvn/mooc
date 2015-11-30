@@ -1,4 +1,5 @@
 {% extends 'admin/layout/base.html' %}
+{% load paginate_templatetags %}
 
 {% block 'css' %}
 {% endblock %}
@@ -64,6 +65,35 @@
                         </table>
                     </div>
                     <!-- /.box-body -->
+
+                    <div class="box-footer clearfix">
+                        <ul class="pagination pagination-sm no-margin pull-right">
+                            {% if is_paginated %}
+                                {% if page_obj.number >= 2 %}
+                                    <li><a class="first" href="?page=1">« First</a></li>
+                                {% endif %}
+
+                                {% if page_obj.has_previous %}
+                                    <li><a class="previouspostslink" rel="prev" href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                                {% endif %}
+
+                                {% for page in page_obj.paginator.page_range %}
+                                    {% if page > page_obj.number|minfilter and page < page_obj.number|maxfilter %}
+                                        {% if page_obj.number != page %}
+                                            <li><a class="page smaller" href="?page={{ page }}">{{ page }}</a></li>
+                                        {% else %}
+                                            <li><span class="current">{{ page }}</span></li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li><a class="nextpostslink" rel="next" href="?page={{ page_obj.next_page_number }}">»</a></li>
+                                {% endif %}
+                                <li><a class="last" href="?page={{ page_obj.paginator.num_pages }}">Last »</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

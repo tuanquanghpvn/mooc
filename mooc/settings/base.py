@@ -14,10 +14,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 from django.core.urlresolvers import reverse_lazy
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(BASE_DIR)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -29,7 +27,6 @@ SECRET_KEY = '-&!#!lccd1pnw3%o28edsnut1rp@@u)5(k91tx8_nh(4ccn!hw'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -68,7 +65,7 @@ SITE_ID = 1
 # auth and allauth settings
 LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_PROVIDERS =  {
+SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'SCOPE': ['email', 'public_profile'],
         # 'METHOD': 'js_sdk',
@@ -119,7 +116,6 @@ AUTHENTICATION_BACKENDS = (
 
 WSGI_APPLICATION = 'mooc.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -128,12 +124,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mooc',
         'HOST': '127.0.0.1',
-        'PASSWORD': 'Python123*',
+        # 'PASSWORD': 'Python123*',
+        'PASSWORD': 'abc!@#ABC',
         'USER': 'root',
         'PORT': '3306'
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -147,7 +143,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

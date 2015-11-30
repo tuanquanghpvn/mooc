@@ -1,12 +1,11 @@
 from django.db import models
 from django.conf import settings
-
 from ars.core.models import UserProfile, Timestampable
 
 
 class Teacher(models.Model):
     profile = models.OneToOneField(UserProfile,
-                                default=None, related_name='teacher')
+                                   default=None, related_name='teacher')
     description = models.TextField(blank=True, default='')
     info = models.TextField(blank=True, default='')
 
@@ -37,7 +36,8 @@ class Teacher(models.Model):
     def avatar(self):
         if self.profile.avatar:
             return self.profile.avatar.url
-        return settings.DEFAULT_IMAGE 
+        return settings.DEFAULT_IMAGE
+
 
 class ApplyForATeacher(Timestampable):
     full_name = models.CharField(max_length=255)
