@@ -13,10 +13,12 @@
             <li class="price">
                 Price <span class="pull-right">Free</span>
             </li>
-            <li class="course-data">
-                <span class="icon icon-038"></span>
-                <span class="pull-right" style="color: red;">Please enroll this course to view all video!</span>
-            </li>
+            {% if not has_enrolled %}
+                <li class="course-data">
+                    <span class="icon icon-038"></span>
+                    <span class="pull-right" style="color: red;">Please enroll this course to view all video!</span>
+                </li>
+            {% endif %}
             <li class="course-data">
                 <span class="icon icon-068"></span>
                 <span class="pull-right">

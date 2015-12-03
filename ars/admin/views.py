@@ -92,7 +92,11 @@ class DashboardView(AdminRequiredMixin, TemplateView):
         context = super(DashboardView, self).get_context_data(**kwargs)
         info = {
             'title': 'Dashboard - TMS',
-            'sidebar': ['dashboard']
+            'sidebar': ['dashboard'],
+            'student': Student.objects.count(),
+            'course': Course.objects.count(),
+            'subject': Subject.objects.count(),
+            'teacher': Teacher.objects.count(),
         }
         context['info'] = info
         return context

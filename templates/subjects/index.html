@@ -8,52 +8,51 @@
     <div class="col-sm-8">
         <div class="courses">
             {% for subject in object_list %}
-            <!-- Course Start -->
-            <div class="course row" data-scroll-reveal>
-                <div class="col-sm-4">
-                    <a href="{% url 'subjects:detail' subject.pk %}"><img src="{{ subject.image.url }}" alt="" class="img-responsive" /></a>
-                </div>
-                <div class="col-sm-8">
-                    <div class="row">
-                        <div class="col-md-9 col-sm-8">
-                            <h3><a href="{% url 'subjects:detail' subject.pk %}">{{ subject.name }}</a></h3>
-                            <div class="meta">
-                                    <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' subject.course.creator.pk %}">{{ subject.course.creator.profile.user.username }}</a></span>
-                                <span><i class="fa fa-file-text"></i>{{ subject.latest_session.tasks.all|length }} tasks</span>
-                                <span><i class="fa fa-folder"></i>
-                                    {% for category in subject.categories.all %}
-                                    <a href="{% url 'category:index' category.pk %}">{{ category }}</a> &nbsp;
-                                    {% endfor %}
-                                </span>
+                <!-- Course Start -->
+                <div class="course row" data-scroll-reveal>
+                    <div class="col-sm-4">
+                        <a href="{% url 'subjects:detail' subject.pk %}"><img src="{{ subject.image.url }}" alt="" class="img-responsive" /></a>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-md-9 col-sm-8">
+                                <h3><a href="{% url 'subjects:detail' subject.pk %}">{{ subject.name }}</a></h3>
+                                <div class="meta">
+                                        <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' subject.course.creator.pk %}">{{ subject.course.creator.profile.user.username }}</a></span>
+                                    <span><i class="fa fa-file-text"></i>{{ subject.latest_session.tasks.all|length }} tasks</span>
+                                    <span><i class="fa fa-folder"></i>
+                                        {% for category in subject.categories.all %}
+                                        <a href="{% url 'category:index' category.pk %}">{{ category }}</a> &nbsp;
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-4 price"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p style="text-align: justify;">{{ subject.description|truncatewords:50 }}<br>
+                                    <a href="{% url 'subjects:detail' subject.pk %}">Read more <i class="fa fa-angle-right"></i></a>
+                                </p>
                             </div>
                         </div>
-                        <div class="col-md-3 col-sm-4 price"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <p style="text-align: justify;">{{ subject.description|truncatewords:50 }}<br>
-                                <a href="{% url 'subjects:detail' subject.pk %}">Read more <i class="fa fa-angle-right"></i></a>
-                            </p>
-                        </div>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <hr>
-                </div>
-            </div>
+                <hr style="margin-top: 10px !important; margin-bottom: 30px;">
             <!-- Course End -->
-            {% endfor %} {# for object_list #}
+            {% endfor %}
+
             {% if is_paginated %}
-            <!-- Pagination Start -->
-            <div class="row" data-scroll-reveal>
-                <div class="col-sm-6">
-                    <a class="btn btn-primary lesson-prev {{ page_obj.has_previous|yesno:',disabled' }}" href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number}}{% else %}{{ page_obj.number }}{% endif %}"><i class="fa fa-caret-left"></i> &nbsp; Previous</a>
+                <!-- Pagination Start -->
+                <div class="row" data-scroll-reveal>
+                    <div class="col-sm-6">
+                        <a class="btn btn-primary lesson-prev {{ page_obj.has_previous|yesno:',disabled' }}" href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number}}{% else %}{{ page_obj.number }}{% endif %}"><i class="fa fa-caret-left"></i> &nbsp; Previous</a>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <a class="btn btn-primary lesson-next {{ page_obj.has_next|yesno:',disabled' }}" href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number}}{% else %}{{ page_obj.number }}{% endif %}">Next &nbsp; <i class="fa fa-caret-right"></i></a>
+                    </div>
                 </div>
-                <div class="col-sm-6 text-right">
-                    <a class="btn btn-primary lesson-next {{ page_obj.has_next|yesno:',disabled' }}" href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number}}{% else %}{{ page_obj.number }}{% endif %}">Next &nbsp; <i class="fa fa-caret-right"></i></a>
-                </div>
-            </div>
-            <!-- Pagination End -->
+                <!-- Pagination End -->
             {% endif %}
         </div>
     </div>

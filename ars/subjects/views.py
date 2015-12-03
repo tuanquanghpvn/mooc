@@ -120,8 +120,8 @@ class EnrollSubjectView(StudentRequiredMixin, CreateView):
         self.object = form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-
-class DetailTaskView(StudentRequiredMixin, BaseView, DetailView):
+# StudentRequiredMixin
+class DetailTaskView(BaseView, DetailView):
     model = Task
     template_name = 'subjects/task.html'
 
@@ -132,6 +132,7 @@ class DetailTaskView(StudentRequiredMixin, BaseView, DetailView):
                 'title': self.object.name,
                 },
             'page_title': self.object.name,
+            'all_task': Task.objects.filter(session=self.object.session),
         }
         context.update(info)
         return context

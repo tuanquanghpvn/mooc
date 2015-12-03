@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-
 from ars.categories.models import Category
 from ars.courses.models import Course
 from ars.students.models import Student
@@ -34,6 +33,7 @@ class Subject(Describable, Timestampable):
             session = None
         return session
 
+
 class Session(models.Model):
     subject = models.ForeignKey(Subject, related_name='sessions')
     start_date = models.DateTimeField()
@@ -46,7 +46,8 @@ class Session(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.start_date, self.end_date)
-    
+
+
 class Task(Describable):
     session = models.ForeignKey(Session, related_name='tasks')
     slug = models.SlugField(max_length=255)
@@ -67,10 +68,11 @@ class Task(Describable):
         if self.image:
             return self.image.url
         return settings.DEFAULT_IMAGE
-    
+
     @property
     def is_published(self):
         return True
+
 
 class Enroll(Timestampable):
     session = models.ForeignKey(Session, related_name='enrolls')
@@ -83,6 +85,6 @@ class Enroll(Timestampable):
 
     def __str__(self):
         return 'Student {} enrolled subject {}, start on {}'.format(
-                                self.profile.user.username,
-                                self.session.subject.name,
-                                self.session.start_date)
+            self.profile.user.username,
+            self.session.subject.name,
+            self.session.start_date)

@@ -9,15 +9,12 @@
     <meta name="description" content="Course Bridge - Python Viet Nam">
     <meta name="description" content="Website: http://pythonvietnam.com --- Forum: http://pythonvietnam.info">
     <meta name="author" content="http://pythonvietnam.info, khanhnn@pythonvietnam.info">
-    <title>Course Bridge - Python Viet Nam </title>
+    <title>Course Bridge - Python Viet Nam - {{ info.title }}</title>
     {% cache 500 head %}
         <link rel="shortcut icon" href="{% static 'frontend/images/favicon.png' %}">
         <!-- Main Stylesheet -->
         <link href="{% static 'frontend/css/style.css' %}" rel="stylesheet">
         <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet">
-
-        {% block cssfiles %}
-        {% endblock cssfiles %}
 
         <!-- HTML5 shiv and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -25,10 +22,12 @@
             <script src="js/respond.min.js"></script>
         <![endif]-->
     {% endcache %}
+
+    {% block cssfiles %}
+    {% endblock cssfiles %}
 </head>
 
 <body>
-    {% cache 500 header %}
     <!-- ========== HEADER START ========== -->
     <header>
         <!-- ==== TOOLS START ==== -->
@@ -63,7 +62,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a href="{% url 'home' %}" class="navbar-brand"><img src="{% static 'frontend/images/logo.png' %}" alt="Course Bridge - Python Viet Nam" class="img-responsive logo" /></a>
+                    <a href="{% url 'home' %}" class="navbar-brand"><img style="margin-top: 10px;" src="{% static 'frontend/images/logo.png' %}" alt="Course Bridge - Python Viet Nam" class="img-responsive logo" /></a>
                 </div>
                 <nav class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -92,7 +91,6 @@
         <!-- ==== NAVBAR END ==== -->
     </header>
     <!-- ========== HEADER END ========== -->
-    {% endcache %}
     <!-- ========== TITLE START ========== -->
     <!--<div class="title">
         <div class="title-image"></div>
@@ -190,7 +188,7 @@
                 <div class="owl-carousel">
                     {% for subject in list_popular_subject %}
                         <div class="item">
-                            <a href="#"><img src="{{ subject.get_image_url }}" alt="" class="img-responsive" /></a>
+                            <a href="#"><img style="max-height: 260px; min-height: 260px;" src="{{ subject.get_image_url }}" alt="" class="img-responsive" /></a>
                             <h3><a href="{% url 'subjects:detail' subject.pk %}">{{ subject.name }}</a></h3>
                             <div class="meta">
                                 <p><a href="#">by {{ subject.course.creator.profile.user.username }}</a></p>
@@ -394,7 +392,7 @@
     <script src="{% static 'frontend/js/settings.js' %}"></script>
     {% endcache %}
 
-    {% block jsfiles %}        
+    {% block jsfiles %}
     {% endblock jsfiles %}
 
     <script>
