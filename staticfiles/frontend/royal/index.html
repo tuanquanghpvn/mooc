@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="css/royalslider.css" rel="stylesheet">
+    <link href="css/rs-default.css" rel="stylesheet">
+    <link href="css/reset.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/jquery.royalslider.min.js?v=9.3.6"></script>
+</head>
+
+<body>
+    <div class="page wrapper main-wrapper">
+        <div class="row clearfix">
+            <div class="col span_6 fwImage">
+                <div id="video-gallery" class="royalSlider videoGallery rsDefault">
+                    <a class="rsImg" data-rsw="843" data-rsh="473" data-rsVideo="http://www.youtube.com/watch?v=HFbHRWwyihE" href="http://dimsemenov.com/plugins/royal-slider/img/admin-video.png">
+                        <div class="rsTmb">
+                            <h5>New RoyalSlider</h5>
+                            <span>by Dmitry Semenov</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://vimeo.com/45830194" href="http://b.vimeocdn.com/ts/319/715/319715493_640.jpg">
+                        <div class="rsTmb">
+                            <h5>Stanley Piano</h5>
+                            <span>by Digital Kitchen</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://vimeo.com/44878206" href="http://b.vimeocdn.com/ts/311/891/311891198_640.jpg">
+                        <div class="rsTmb">
+                            <h5>Dubstep Dispute</h5>
+                            <span>by Fluxel Media</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://vimeo.com/45778774" href="http://b.vimeocdn.com/ts/318/502/318502540_640.jpg">
+                        <div class="rsTmb">
+                            <h5>The Epic & The Beasts</h5>
+                            <span>by Sebastian Linda</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://vimeo.com/41132461" href="http://b.vimeocdn.com/ts/284/709/284709146_640.jpg">
+                        <div class="rsTmb">
+                            <h5>Barcode Band</h5>
+                            <span>by Kang woon Jin</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://vimeo.com/44388232" href="http://b.vimeocdn.com/ts/308/375/308375094_640.jpg">
+                        <div class="rsTmb">
+                            <h5>Samm Hodges Reel</h5>
+                            <span>by Animal</span>
+                        </div>
+                    </a>
+                    <a class="rsImg" data-rsVideo="https://www.youtube.com/watch?v=agRtaWTItQ0" href="/plugins/royal-slider/img/video/02.jpg">
+                        <div class="rsTmb">
+                            <h5>The Foundry Showreel</h5>
+                            <span>by The Foundry</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper page">
+        <script>
+        jQuery(document).ready(function($) {
+            $('#video-gallery').royalSlider({
+                arrowsNav: false,
+                fadeinLoadedSlide: true,
+                controlNavigationSpacing: 0,
+                controlNavigation: 'thumbnails',
+                thumbs: {
+                    autoCenter: false,
+                    fitInViewport: true,
+                    orientation: 'vertical',
+                    spacing: 0,
+                    paddingBottom: 0
+                },
+                keyboardNavEnabled: true,
+                imageScaleMode: 'fill',
+                imageAlignCenter: true,
+                slidesSpacing: 0,
+                loop: false,
+                loopRewind: true,
+                numImagesToPreload: 3,
+                video: {
+                    autoHideArrows: true,
+                    autoHideControlNav: false,
+                    autoHideBlocks: true,
+                    youTubeCode: '<iframe src="https://www.youtube.com/embed/%id%?rel=1&autoplay=1&showinfo=0" frameborder="no" allowFullscreen></iframe>'
+                },
+                autoScaleSlider: true,
+                autoScaleSliderWidth: 960,
+                autoScaleSliderHeight: 450,
+
+                /* size of all images http://help.dimsemenov.com/kb/royalslider-jquery-plugin-faq/adding-width-and-height-properties-to-images */
+                imgWidth: 640,
+                imgHeight: 360
+
+            });
+        });
+        </script>
+    </div>
+</body>
+
+</html>

@@ -27,7 +27,7 @@ class StudentRequiredMixin(object):
 
 class BaseView(ContextMixin):
     """docstring for BaseView"""
-    # @method_decorator(cache_page(60 * 15))
+    @method_decorator(cache_page(60 * 15))
     @method_decorator(gzip_page)
     def dispatch(self, request, *args, **kwargs):
         return super(BaseView, self).dispatch(request, *args, **kwargs)
