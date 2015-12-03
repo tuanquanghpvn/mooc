@@ -2,12 +2,12 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, View, FormView
 from django.views.generic.detail import SingleObjectMixin
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
-
 from ars.subjects.models import Subject, Task
 from ars.core.views import LoginRequiredMixin, BaseView, StudentRequiredMixin
 from ars.subjects.models import Enroll
 from ars.reviews.forms import ReviewSubjectForm
 from ars.reviews.models import Review
+
 
 class ListSubjectView(BaseView, ListView):
     model = Subject
@@ -22,7 +22,7 @@ class ListSubjectView(BaseView, ListView):
         info = {
             'info': {
                 'title': 'Course Bridge',
-                },
+            },
             'page_title': 'Subjects List',
         }
         context.update(info)
@@ -34,13 +34,13 @@ class DetailSubjectMixin(object):
     template_name = 'subjects/detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)        
+        context = super().get_context_data(**kwargs)
 
         if hasattr(self.request.user, 'profile') and \
-           hasattr(self.request.user.profile, 'student'):
+                hasattr(self.request.user.profile, 'student'):
             student = self.request.user.profile.student
             has_reviewed = Review.objects.filter(
-                    student=student, subject=self.object).exists()
+                student=student, subject=self.object).exists()
             if self.object.latest_session is not None:
                 has_enrolled = self.object.latest_session.enrolls.filter(student=student).exists()
             else:
@@ -48,7 +48,6 @@ class DetailSubjectMixin(object):
         else:
             has_reviewed = False
             has_enrolled = False
-        
 
         if self.object.latest_session is not None:
             context['num_enrollers'] = self.object.latest_session.enrolls.count()
@@ -56,14 +55,14 @@ class DetailSubjectMixin(object):
         info = {
             'info': {
                 'title': self.object.name,
-                },
+            },
             'page_title': 'Subject',
         }
         context.update(info)
         context['has_reviewed'] = has_reviewed
         context['has_enrolled'] = has_enrolled
         return context
-    
+
 
 class DisplaySubjectView(DetailSubjectMixin, BaseView, DetailView):
     pass
@@ -71,10 +70,10 @@ class DisplaySubjectView(DetailSubjectMixin, BaseView, DetailView):
 
 class ReviewSubjectView(DetailSubjectMixin, BaseView, SingleObjectMixin, FormView):
     form_class = ReviewSubjectForm
-    
+
     def get_success_url(self):
         return reverse_lazy('subjects:detail', kwargs={'pk': self.object.pk})
-    
+
     def post(self, request, *args, **kwargs):
 
         if not request.user.is_authenticated():
@@ -94,7 +93,6 @@ class ReviewSubjectView(DetailSubjectMixin, BaseView, SingleObjectMixin, FormVie
 
 
 class DetailSubjectView(View):
-
     def get(self, request, *args, **kwargs):
         view = DisplaySubjectView.as_view()
         return view(request, *args, **kwargs)
@@ -113,15 +111,15 @@ class EnrollSubjectView(StudentRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('subjects:detail',
-                    kwargs={'pk': self.object.session.subject.pk})
-    
+                       kwargs={'pk': self.object.session.subject.pk})
+
     def form_valid(self, form):
         form.instance.student = self.request.user.profile.student
         self.object = form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-# StudentRequiredMixin
-class DetailTaskView(BaseView, DetailView):
+
+class DetailTaskView(StudentRequiredMixin, BaseView, DetailView):
     model = Task
     template_name = 'subjects/task.html'
 
@@ -130,7 +128,7 @@ class DetailTaskView(BaseView, DetailView):
         info = {
             'info': {
                 'title': self.object.name,
-                },
+            },
             'page_title': self.object.name,
             'all_task': Task.objects.filter(session=self.object.session),
         }
