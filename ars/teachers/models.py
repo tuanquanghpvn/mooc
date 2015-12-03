@@ -13,7 +13,7 @@ class Teacher(models.Model):
         db_table = 'teacher'
 
     def __str__(self):
-        return 'Teacher {}'.format(self.name)
+        return '{}'.format(self.profile.user.username)
 
     @property
     def username(self):

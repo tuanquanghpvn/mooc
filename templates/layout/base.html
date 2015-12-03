@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load cache %}
 <!DOCTYPE html>
 <html>
 
@@ -9,22 +10,25 @@
     <meta name="description" content="Website: http://pythonvietnam.com --- Forum: http://pythonvietnam.info">
     <meta name="author" content="http://pythonvietnam.info, khanhnn@pythonvietnam.info">
     <title>Course Bridge - Python Viet Nam </title>
-    <link rel="shortcut icon" href="{% static 'frontend/images/favicon.png' %}">
-    <!-- Main Stylesheet -->
-    <link href="{% static 'frontend/css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet">
-    
-    {% block cssfiles %}
-    {% endblock cssfiles %}
-    
-    <!-- HTML5 shiv and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>  {{ info.title }}
-        <script src="js/respond.min.js"></script>
-    <![endif]-->
+    {% cache 500 head %}
+        <link rel="shortcut icon" href="{% static 'frontend/images/favicon.png' %}">
+        <!-- Main Stylesheet -->
+        <link href="{% static 'frontend/css/style.css' %}" rel="stylesheet">
+        <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet">
+
+        {% block cssfiles %}
+        {% endblock cssfiles %}
+
+        <!-- HTML5 shiv and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="js/html5shiv.js"></script>  {{ info.title }}
+            <script src="js/respond.min.js"></script>
+        <![endif]-->
+    {% endcache %}
 </head>
 
 <body>
+    {% cache 500 header %}
     <!-- ========== HEADER START ========== -->
     <header>
         <!-- ==== TOOLS START ==== -->
@@ -77,9 +81,9 @@
                                 <li><a href="upcoming-exams-right-sidebar.html">Upcoming Exams - Right Sidebar</a></li>
                             </ul>
                         </li>-->
-                        <li><a href="{% url 'about:index' %}">About</a></li>                        
-                        <li><a href="{% url 'blog:index' %}">Blog</a></li>                        
-                        <li><a href="{% url 'teachers:index' %}">Teachers</a></li>                        
+                        <li><a href="{% url 'about:index' %}">About</a></li>
+                        <li><a href="{% url 'blog:index' %}">Blog</a></li>
+                        <li><a href="{% url 'teachers:index' %}">Teachers</a></li>
                         <li><a href="{% url 'contact:index' %}">Contact</a></li>
                     </ul>
                 </nav>
@@ -88,6 +92,7 @@
         <!-- ==== NAVBAR END ==== -->
     </header>
     <!-- ========== HEADER END ========== -->
+    {% endcache %}
     <!-- ========== TITLE START ========== -->
     <!--<div class="title">
         <div class="title-image"></div>
@@ -101,7 +106,7 @@
     {% block precontent %}
     {% endblock precontent %}
     <!-- ========== CONTENT START ========== -->
-    
+
     <section id="content">
         <div class="container">
             <div class="row">
@@ -163,19 +168,19 @@
                     <!-- ==== SIDEBAR END == -->
                 {% endblock %}
 
-                {% block content %}                    
+                {% block content %}
                 {% endblock %}
             </div>
         </div>
     </section>
-    
+
     <!-- ========== CONTENT END ========== -->
     <!-- ========== RELATED COURSES START ========== -->
     {% block related_subjects %}
 
         <section id="featured-posts" class="alt-background">
             <div class="container">
-                
+
                 <h2 class="text-center carousel-title">
                     Related Courses
                     <a href="{% url 'home' %}">View All Courses</a>
@@ -282,7 +287,7 @@
                             <p><img src="{% static 'frontend/images/prefooter-about.jpg' %}" alt="" class="img-responsive" /></p>
                         </div>
                         <div class="col-sm-7">
-                            <p>Cộng đồng Python Việt Nam được thành lập năm 2012 với mục đích đưa ngôn ngữ Python đến các lập trình viên ở Việt Nam. Python Việt Nam hình thành khá tình cờ, bền vững bởi tinh thần ham học hỏi các công nghệ, ngôn ngữ mới ...</p>                            
+                            <p>Cộng đồng Python Việt Nam được thành lập năm 2012 với mục đích đưa ngôn ngữ Python đến các lập trình viên ở Việt Nam. Python Việt Nam hình thành khá tình cờ, bền vững bởi tinh thần ham học hỏi các công nghệ, ngôn ngữ mới ...</p>
                             <br>
                             <a href="{% url 'about:index' %}">Read More <i class="fa fa-angle-right"></i></a></p>
                         </div>
@@ -293,7 +298,7 @@
                 <div class="col-sm-3">
                     <h3>Apply for a Teacher</h3>
                     <form action="{% url 'teachers:create' %}" method="POST">
-                        {% csrf_token %}                        
+                        {% csrf_token %}
 
                         <input type="hidden" name="cur_url" value="{{ request.path }}">
                         <div class="form-group" id="teacher-name-group">
@@ -341,7 +346,7 @@
             <div class="row">
                 <!-- ==== CREDITS START == -->
                 <div class="col-sm-8">
-                    &copy; 2015 
+                    &copy; 2015
                 </div>
                 <!-- ==== CREDITS END == -->
                 <!-- ==== SOCIAL ICONS START == -->
@@ -356,6 +361,7 @@
     </footer>
     <!-- ========== FOOTER END ========== -->
 
+    {% cache 500 script %}
     <!-- Modernizr Plugin -->
     <script src="{% static 'frontend/js/modernizr.custom.97074.js' %}"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -386,6 +392,7 @@
     <script src="{% static 'frontend/js/magic.js' %}"></script>
     <!-- jQuery Settings -->
     <script src="{% static 'frontend/js/settings.js' %}"></script>
+    {% endcache %}
 
     {% block jsfiles %}        
     {% endblock jsfiles %}

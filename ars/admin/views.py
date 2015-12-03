@@ -22,7 +22,7 @@ from ars.reviews.models import Review
 from ars.blog.models import Blog
 from ars.teachers.models import Teacher, ApplyForATeacher
 from ars.students.models import Student
-from ars.core.models import UserProfile
+from django.core.exceptions import PermissionDenied
 from . import forms
 
 
@@ -40,7 +40,17 @@ class TeacherRequiredMixin(object):
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class AdminTeacherForDeleteRequiredMixin(object):
+    """docstring for AdminTeacherForDeleteRequiredMixin"""
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AdminTeacherForDeleteRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
 class LoginRequiredMixin(object):
@@ -209,6 +219,26 @@ class CourseView(TeacherRequiredMixin, ListView):
         return context
 
 
+class CourseSuperView(AdminRequiredMixin, ListView):
+    """docstring for CourseView"""
+    model = Course
+    context_object_name = 'list_course'
+    template_name = 'admin/course_super_index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Course.objects.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        info = {
+            'title': 'Course - TMS',
+            'sidebar': ['course']
+        }
+        context['info'] = info
+        return context
+
+
 class CourseCreateView(TeacherRequiredMixin, CreateView):
     """docstring for CourseCreateView"""
     model = Course
@@ -254,15 +284,22 @@ class CourseUpdateView(TeacherRequiredMixin, UpdateView):
         return reverse('admin:list_course')
 
 
-class CourseDeleteView(TeacherRequiredMixin, DeleteView):
+class CourseDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
     """docstring for CourseDeleteView"""
     model = Course
 
     def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+        object = self.get_object()
+        if request.user.is_superuser or object.creator.profile.user == request.user:
+            return self.post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
     def get_success_url(self):
-        return reverse('admin:list_course')
+        if self.request.user.is_superuser:
+            return reverse('admin:list_course')
+        else:
+            return reverse('admin:list_course_super')
 
 
 # Subjects Management
@@ -280,6 +317,26 @@ class SubjectView(TeacherRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(SubjectView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Subject - TMS',
+            'sidebar': ['subject']
+        }
+        context['info'] = info
+        return context
+
+
+class SubjectSuperView(AdminRequiredMixin, ListView):
+    """docstring for SubjectView"""
+    model = Subject
+    context_object_name = 'list_subject'
+    template_name = 'admin/subject_super_index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Subject.objects.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         info = {
             'title': 'Subject - TMS',
             'sidebar': ['subject']
@@ -434,15 +491,45 @@ class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
             return super().post(request, *args, **kwargs)
 
 
-class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
+class SubjectSuperDetailView(AdminRequiredMixin, DetailView):
+    model = Subject
+    template_name = 'admin/subject_super_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        info = {
+            'title': 'Detail Subject - TMS',
+            'sidebar': ['subject']
+        }
+        context['info'] = info
+
+        context['reviews'] = Review.objects.filter(subject=self.object).order_by('-id')
+
+        context['sessions'] = Session.objects.filter(subject=self.object)
+
+        context['tasks'] = Task.objects.filter(session__subject=self.object).order_by('-id')
+
+        context['endrolls'] = Enroll.objects.filter(session__subject=self.object).order_by('-id')
+        return context
+
+
+class SubjectDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
     """docstring for SubjectDeleteView"""
     model = Subject
 
     def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+        object = self.get_object()
+        if request.user.is_superuser or object.course.creator.profile.user == request.user:
+            return self.post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
     def get_success_url(self):
-        return reverse('admin:list_subject')
+        if self.request.user.is_superuser:
+            return reverse('admin:list_subject_super')
+        else:
+            return reverse('admin:list_subject')
 
 
 # Sessions Management
@@ -502,16 +589,16 @@ class TaskCreateView(TeacherRequiredMixin, CreateView):
         return reverse_lazy('admin:detail_subject', kwargs={'pk': self.session.subject.pk})
 
 
-class TaskDeleteView(TeacherRequiredMixin, DeleteView):
+class TaskDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
     """docstring for TaskDeleteView"""
     model = Task
 
     def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super(TaskDeleteView, self).post(request)
+        object = self.get_object()
+        if request.user.is_superuser or object.session.subject.course.creator.profile.user == request.user:
+            return self.post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
     def get_success_url(self):
         return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.session.subject.pk})
@@ -531,6 +618,26 @@ class BlogView(TeacherRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(BlogView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Blog - TMS',
+            'sidebar': ['blog']
+        }
+        context['info'] = info
+        return context
+
+
+class BlogSuperView(AdminRequiredMixin, ListView):
+    """docstring for BlogView"""
+    model = Blog
+    context_object_name = 'list_blog'
+    template_name = 'admin/blog_super_index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Blog.objects.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         info = {
             'title': 'Blog - TMS',
             'sidebar': ['blog']
@@ -583,12 +690,16 @@ class BlogUpdateView(TeacherRequiredMixin, UpdateView):
         return reverse('admin:list_blog')
 
 
-class BlogDeleteView(TeacherRequiredMixin, DeleteView):
+class BlogDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
     """docstring for BlogDeleteView"""
     model = Blog
 
     def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+        object = self.get_object()
+        if request.user.is_superuser or object.teacher.profile.user == request.user:
+            return self.post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
     def get_success_url(self):
         return reverse('admin:list_blog')

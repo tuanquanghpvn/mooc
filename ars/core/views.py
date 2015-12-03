@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.detail import ContextMixin
 from django.views.decorators.gzip import gzip_page
 from django.http import HttpResponseForbidden
+from django.views.decorators.cache import cache_page
 
 from ars.categories.models import Category
 from ars.blog.models import Blog
@@ -26,6 +27,7 @@ class StudentRequiredMixin(object):
 
 class BaseView(ContextMixin):
     """docstring for BaseView"""
+    @method_decorator(cache_page(60 * 15))
     @method_decorator(gzip_page)
     def dispatch(self, request, *args, **kwargs):
         return super(BaseView, self).dispatch(request, *args, **kwargs)

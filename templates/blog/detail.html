@@ -16,7 +16,7 @@
                     <div class="post-day">28</div>
                     <div class="post-month">Sep</div>
                 </div>
-                <h1>Morbi nec quam sed elit pharetra</h1>
+                <h1>{{ object.title }}</h1>
                 <div class="meta">
                     <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' object.teacher.pk %}">{{ object.teacher.username }}</a></span>
                     <span><i class="fa fa-comments"></i><a href="#">{{ object.comments.count }}</a></span>
