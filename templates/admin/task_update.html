@@ -1,0 +1,148 @@
+{% extends 'admin/layout/base.html' %}
+{% load staticfiles %}
+
+{% block 'css' %}
+    <link rel="stylesheet" href="{% static 'admin/plugins/select2/select2.min.css' %}">
+{% endblock %}
+
+{% block 'content' %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Subject
+            <small>Update</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="/admin/subject">Subject</a></li>
+            <li class="active">Update</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <div class="box box-danger">
+                        <div class="box-header with-border">
+                            <div class="pull-left">
+                                <a class="btn btn-xs btn-warning" href="{% url 'admin:detail_subject' object.session.subject.id %}">Back</a>
+                            </div>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            {% csrf_token %}
+
+                            <div class="form-group {{ form.session.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Session</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control select2" name="{{ form.session.html_name }}" data-placeholder="Select session" style="width: 100%;">
+                                        {% for session in sessions  %}
+                                            <option value="{{ session.id }}">{{ session.start_date|date:'d/m/Y' }} - {{ session.end_date|date:'d/m/Y' }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="help-block">{{ form.session.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.name.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input id="id_name" value="{{ form.name.value|default:'' }}" type="text" class="form-control" name="{{ form.name.html_name }}" />
+                                    <span class="help-block">{{ form.name.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.slug.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Slug</label>
+                                <div class="col-sm-10">
+                                    <input id="id_slug" type="text" value="{{ form.slug.value|default:'' }}" class="form-control" name="{{ form.slug.html_name }}" />
+                                    <span class="help-block">{{ form.slug.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.link_youtube.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Youtube</label>
+                                <div class="col-sm-10">
+                                    <input type="text" value="{{ form.link_youtube.value|default:'' }}" class="form-control" name="{{ form.link_youtube.html_name }}" />
+                                    <span class="help-block">{{ form.link_youtube.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.content.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Content</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="{{ form.content.html_name }}">{{ form.content.value|default:'' }}</textarea>
+                                    <span class="help-block">{{ form.content.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.start_date.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">Start Date</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input name="{{ form.start_date.html_name }}" value="{{ form.start_date.value|default:'' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                                    </div>
+                                    <span class="help-block">{{ form.start_date.errors }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group {{ form.end_date.errors|yesno:'has-error,' }}">
+                                <label class="col-sm-2 control-label">End Date</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input name="{{ form.end_date.html_name }}" value="{{ form.end_date.value|default:'' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                                    </div>
+                                    <span class="help-block">{{ form.end_date.errors }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary pull-right">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block 'js' %}
+    <script src="{% static 'admin/plugins/input-mask/jquery.inputmask.js' %}"></script>
+    <script src="{% static 'admin/plugins/input-mask/jquery.inputmask.date.extensions.js' %}"></script>
+    <script src="{% static 'admin/plugins/input-mask/jquery.inputmask.extensions.js' %}"></script>
+    <script src="{% static 'admin/plugins/select2/select2.full.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(".datemask").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+        });
+
+        $(".select2").select2();
+
+        $("#id_name").keyup(function(){
+            var str = $(this).val();
+            str = str.toLowerCase();
+            str= str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
+            str= str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e");
+            str= str.replace(/ì|í|ị|ỉ|ĩ/g,"i");
+            str= str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o");
+            str= str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u");
+            str= str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y");
+            str= str.replace(/đ/g,"d");
+            str= str.replace(/!|@|\$|%|\^|\*|\(|\)|\+|\=|\&lt;|\&gt;|\?|\/|,|\.|\:|\'| |\"|\&amp;|\#|\[|\]|~/g,"-");
+            str= str.replace(/-+-/g,"-"); //thay thế 2- thành 1-
+            str= str.replace(/^\-+|\-+$/g,"");//cắt bỏ ký tự - ở đầu và cuối chuỗi
+            str = str.replace(/[^a-zA-Z0-9]+/g,'-');
+            $("#id_slug").val(str);        
+        });
+    </script>
+{% endblock %}

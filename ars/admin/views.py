@@ -358,8 +358,10 @@ class SubjectCreateView(TeacherRequiredMixin, CreateView):
     def get(self, request, *args, **kwargs):
         self.object = None
         form = self.get_form()
-        form.fields['courses'] = djforms.ModelChoiceField(
-            queryset=Course.objects.filter(teachers__profile__user=self.request.user))
+        form.fields['course'] = djforms.ModelChoiceField(
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user), widget=djforms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;'}))
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
@@ -370,6 +372,13 @@ class SubjectCreateView(TeacherRequiredMixin, CreateView):
         }
         context['info'] = info
         return context
+
+    def form_invalid(self, form):
+        form.fields['course'] = djforms.ModelChoiceField(
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user), widget=djforms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;'}))
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse('admin:list_subject')
@@ -384,8 +393,10 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        form.fields['courses'] = djforms.ModelChoiceField(
-            queryset=Course.objects.filter(teachers__profile__user=self.request.user))
+        form.fields['course'] = djforms.ModelChoiceField(
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user), widget=djforms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;'}))
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
@@ -396,6 +407,13 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
         }
         context['info'] = info
         return context
+
+    def form_invalid(self, form):
+        form.fields['course'] = djforms.ModelChoiceField(
+            queryset=Course.objects.filter(teachers__profile__user=self.request.user), widget=djforms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;'}))
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse('admin:list_subject')
@@ -450,7 +468,7 @@ class CreateTaskSubmit(TeacherRequiredMixin, CommonContextSubject,
 
     def form_invalid(self, form):
         return self.render_to_response(
-            self.get_context_data(task_form=form))
+            self.get_context_data(task_form=form, cur_form=True))
 
 
 class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
@@ -471,17 +489,13 @@ class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
 
     def form_invalid(self, form):
         return self.render_to_response(
-            self.get_context_data(session_form=form))
+            self.get_context_data(session_form=form, cur_form=False))
 
 
 class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
     task_form = forms.TaskForm
     session_form = forms.SessionForm
-
-    def get(self, request, *args, **kwargs):
-        kwargs.setdefault('task_form', self.task_form())
-        kwargs.setdefault('session_form', self.session_form())
-        return super().get(request, *args, **kwargs)
+    cur_form = True
 
     def post(self, request, *args, **kwargs):
         if 'submit_task' in request.POST:
@@ -493,6 +507,13 @@ class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
             return view(request, *args, **kwargs)
         except NameError as err:
             return super().post(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task_form'] = self.task_form
+        context['session_form'] = self.session_form
+        context['cur_form'] = self.cur_form
+        return context
 
 
 class SubjectSuperDetailView(AdminRequiredMixin, DetailView):
@@ -568,7 +589,7 @@ class TaskCreateView(TeacherRequiredMixin, CreateView):
     """docstring for TaskCreateView"""
     model = Task
     fields = ['session', 'name', 'slug', 'content', 'start_date',
-              'end_date', 'image', 'link_youtube']
+              'end_date', 'link_youtube']
 
     def get_context_data(self, **kwargs):
         context = super(TaskCreateView, self).get_context_data(**kwargs)
@@ -591,6 +612,26 @@ class TaskCreateView(TeacherRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('admin:detail_subject', kwargs={'pk': self.session.subject.pk})
+
+
+class TaskUpdateView(TeacherRequiredMixin, UpdateView):
+    model = Task
+    fields = ['session', 'name', 'slug', 'content', 'start_date',
+              'end_date', 'link_youtube']
+    template_name = 'admin/task_update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        info = {
+            'title': 'Update Task - TMS',
+            'sidebar': ['subject']
+        }
+        context['info'] = info
+        context['sessions'] = Session.objects.filter(subject=self.object.session.subject)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.session.subject.id})
 
 
 class TaskDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):

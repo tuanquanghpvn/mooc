@@ -1,9 +1,7 @@
 from django import forms
-from django.conf import settings
 from django.contrib.auth.models import User
 
 from ars.subjects.models import Subject
-from ars.core.models import UserProfile
 from ars.subjects.models import Task, Session
 
 import re
@@ -20,10 +18,6 @@ class SubjectForm(forms.ModelForm):
                 attrs={'class': 'form-control select2',
                         'style': 'width: 100%;',
                         'multiple': "multiple"}),
-
-            'course': forms.widgets.Select(
-                attrs={'class': 'form-control select2',
-                        'style': 'width: 100%;'}),            
         }
 
 

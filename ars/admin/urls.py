@@ -55,6 +55,8 @@ urlpatterns = [
         name='create_session'),
     url(r'^task/create/$', views.TaskCreateView.as_view(),
         name='create_task'),
+    url(r'^task/update/(?P<pk>[0-9]+)/$', views.TaskUpdateView.as_view(),
+        name='update_task'),
     url(r'^task/delete/(?P<pk>[0-9]+)/$', views.TaskDeleteView.as_view(),
         name='delete_task'),
 

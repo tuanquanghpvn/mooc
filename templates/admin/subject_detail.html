@@ -68,17 +68,17 @@
             <div class="col-md-9">
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="{{ task_form|yesno:'active' }}"><a href="#task" data-toggle="tab">Task</a></li>
-                        <li class="{{ session_form|yesno:'active' }}"><a href="#sessions" data-toggle="tab">Sessions</a></li>
+                        <li class="{% if cur_form %} active {% endif %}"><a href="#task" data-toggle="tab">Task</a></li>
+                        <li class="{% if not cur_form %} active {% endif %}"><a href="#sessions" data-toggle="tab">Sessions</a></li>
                         <li><a href="#reviews" data-toggle="tab">Reviews</a></li>
                         <li><a href="#endrolls" data-toggle="tab">Endroll</a></li>
                     </ul>
                     <div class="tab-content">                        
-                        <div class="active tab-pane" id="task">
+                        <div class="{% if cur_form %} active {% endif %} tab-pane" id="task">
                             {% if task_form %}
                                 <form class="form-horizontal" method="POST" action="{% url 'admin:detail_subject' object.pk %}">
                                     {% csrf_token %}
-                                    {% if task_form.non_field_errors %} 
+                                    {% if task_form.non_field_errors %}
                                         <div class="form-group">
                                             <div class="col-sm-10 col-sm-offset-2 text-danger">
                                                 {{ task_form.non_field_errors }}
@@ -87,7 +87,7 @@
                                     {% endif %}
 
                                     <div class="form-group {{ task_form.session.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Session</label>
+                                        <label class="col-sm-2 control-label">Session</label>
                                         <div class="col-sm-10">
                                             <select class="form-control select2" name="{{ task_form.session.html_name }}" data-placeholder="Select session" style="width: 100%;">
                                                 {% for session in sessions  %}
@@ -99,7 +99,7 @@
                                     </div>
 
                                     <div class="form-group {{ task_form.name.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                        <label class="col-sm-2 control-label">Name</label>
                                         <div class="col-sm-10">
                                             <input id="id_name" value="{{ task_form.name.value|default:'' }}" type="text" class="form-control" name="{{ task_form.name.html_name }}" />
                                             <span class="help-block">{{ task_form.name.errors }}</span>
@@ -107,7 +107,7 @@
                                     </div>
 
                                     <div class="form-group {{ task_form.slug.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Slug</label>
+                                        <label class="col-sm-2 control-label">Slug</label>
                                         <div class="col-sm-10">
                                             <input id="id_slug" type="text" value="{{ task_form.slug.value|default:'' }}" class="form-control" name="{{ task_form.slug.html_name }}" />
                                             <span class="help-block">{{ task_form.slug.errors }}</span>
@@ -115,15 +115,15 @@
                                     </div>
 
                                     <div class="form-group {{ task_form.link_youtube.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Youtube</label>
+                                        <label class="col-sm-2 control-label">Youtube</label>
                                         <div class="col-sm-10">
                                             <input type="text" value="{{ task_form.link_youtube.value|default:'' }}" class="form-control" name="{{ task_form.link_youtube.html_name }}" />
                                             <span class="help-block">{{ task_form.link_youtube.errors }}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group {{ task_form.content.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Content</label>
+                                        <label class="col-sm-2 control-label">Content</label>
                                         <div class="col-sm-10">
                                             <textarea class="form-control" name="{{ task_form.content.html_name }}">{{ task_form.content.value|default:'' }}</textarea>
                                             <span class="help-block">{{ task_form.content.errors }}</span>
@@ -131,7 +131,7 @@
                                     </div>
 
                                     <div class="form-group {{ task_form.start_date.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">Start Date</label>
+                                        <label class="col-sm-2 control-label">Start Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -144,7 +144,7 @@
                                     </div>
 
                                     <div class="form-group {{ task_form.end_date.errors|yesno:'has-error,,' }}">
-                                        <label for="inputName" class="col-sm-2 control-label">End Date</label>
+                                        <label class="col-sm-2 control-label">End Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -168,14 +168,14 @@
                                     <div class="form-group {% if messages %} has-error {% endif %}">
                                         <div class="col-sm-2"></div>
                                         <div class="col-sm-10">
-                                            {% for message in messages %}                                        
+                                            {% for message in messages %}
                                                 <span class="help-block">{{ message }}</span>
                                             {% endfor %}
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Session</label>
+                                        <label class="col-sm-2 control-label">Session</label>
                                         <div class="col-sm-10">
                                             <select class="form-control select2" name="session" data-placeholder="Select session" style="width: 100%;">
                                                 {% for session in sessions  %}
@@ -186,35 +186,35 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                        <label class="col-sm-2 control-label">Name</label>
                                         <div class="col-sm-10">
                                             <input id="id_name" value="" type="text" class="form-control" name="name" />
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Slug</label>
+                                        <label class="col-sm-2 control-label">Slug</label>
                                         <div class="col-sm-10">
                                             <input id="id_slug" type="text" value="" class="form-control" name="slug" />
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Youtube</label>
+                                        <label class="col-sm-2 control-label">Youtube</label>
                                         <div class="col-sm-10">
                                             <input type="text" value="" class="form-control" name="link_youtube" />
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Content</label>
+                                        <label class="col-sm-2 control-label">Content</label>
                                         <div class="col-sm-10">
                                             <textarea class="form-control" value="" name="content"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Start Date</label>
+                                        <label class="col-sm-2 control-label">Start Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -226,7 +226,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">End Date</label>
+                                        <label class="col-sm-2 control-label">End Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -263,7 +263,10 @@
                                         <td>
                                             <a target="_blank" href="{{ task.link_youtube }}">{{ task.link_youtube }}</a>
                                         </td>                                    
-                                        <td class="text-center">                                        
+                                        <td class="text-center">
+                                            <a href="{% url 'admin:update_task' task.id %}">
+                                                <span class="badge">Update</span>
+                                            </a>
                                             <a href="#" data-href="{% url 'admin:delete_task' task.id %}" data-toggle="modal" data-target="#confirm-delete">
                                                 <span class="badge bg-red">Delete</span>
                                             </a>
@@ -273,12 +276,12 @@
                             </table>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane" id="sessions">                                                        
+                        <div class="{% if not cur_form %} active {% endif %} tab-pane" id="sessions">
                             {% if session_form %}
                                 <form class="form-horizontal" method="POST" action="{% url 'admin:detail_subject' object.pk %}">
                                     {% csrf_token %}
 
-                                    {% if session_form.non_field_errors %} 
+                                    {% if session_form.non_field_errors %}
                                         <div class="form-group">
                                             <div class="col-sm-10 col-sm-offset-2 text-danger">
                                                 {{ session_form.non_field_errors }}
@@ -288,7 +291,7 @@
 
                                     <input type="hidden" value="{{ subject.pk }}" name="subject">
                                     <div class="form-group {% if session_form.start_date.errors %} has-error {% endif %}">
-                                        <label for="inputName" class="col-sm-2 control-label">Start Date</label>
+                                        <label class="col-sm-2 control-label">Start Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -301,7 +304,7 @@
                                     </div>
 
                                     <div class="form-group {% if session_form.end_date.errors %} has-error {% endif %}">
-                                        <label for="inputName" class="col-sm-2 control-label">End Date</label>
+                                        <label class="col-sm-2 control-label">End Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -335,7 +338,7 @@
 
                                     <input type="hidden" value="{{ subject.pk }}" name="subject">
                                     <div class="form-group {% if form_session.start_date.errors %} has-error {% endif %}">
-                                        <label for="inputName" class="col-sm-2 control-label">Start Date</label>
+                                        <label class="col-sm-2 control-label">Start Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
@@ -348,7 +351,7 @@
                                     </div>
 
                                     <div class="form-group {% if form_session.end_date.errors %} has-error {% endif %}">
-                                        <label for="inputName" class="col-sm-2 control-label">End Date</label>
+                                        <label class="col-sm-2 control-label">End Date</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
