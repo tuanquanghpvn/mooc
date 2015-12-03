@@ -62,7 +62,7 @@
                 </li>
             {% endif %}
 
-            {% if request.user.is_teacher %}
+            {% if request.user.profile.is_teacher %}
                 <li class="{% if 'course' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:list_course' %}">
                     <i class="fa fa-list"></i> <span>Course</span>
