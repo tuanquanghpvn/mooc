@@ -40,19 +40,12 @@ class TeacherRequiredMixin(object):
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_superuser:
+        if request.user.is_superuser and not request.user.profile.is_teacher:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
-class AdminTeacherForDeleteRequiredMixin(object):
-    """docstring for AdminTeacherForDeleteRequiredMixin"""
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(AdminTeacherForDeleteRequiredMixin, self).dispatch(request, *args, **kwargs)
-
-
+# Function
 class LoginRequiredMixin(object):
     """docstring for LoginRequiredMixin"""
 
@@ -61,7 +54,7 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
-# Login and dashborad Management
+# Login and dashboard Management
 
 class LoginView(FormView):
     form_class = AdminAuthenticationForm
@@ -210,31 +203,14 @@ class CourseView(TeacherRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Course.objects.filter(
-            teachers=self.request.user.profile.teacher).order_by('-id')
+        if self.request.user.is_superuser:
+            return Course.objects.order_by('-id')
+        else:
+            return Course.objects.filter(
+                teachers=self.request.user.profile.teacher).order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(CourseView, self).get_context_data(**kwargs)
-        info = {
-            'title': 'Course - TMS',
-            'sidebar': ['course']
-        }
-        context['info'] = info
-        return context
-
-
-class CourseSuperView(AdminRequiredMixin, ListView):
-    """docstring for CourseView"""
-    model = Course
-    context_object_name = 'list_course'
-    template_name = 'admin/course_super_index.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Course.objects.order_by('-id')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         info = {
             'title': 'Course - TMS',
             'sidebar': ['course']
@@ -288,7 +264,7 @@ class CourseUpdateView(TeacherRequiredMixin, UpdateView):
         return reverse('admin:list_course')
 
 
-class CourseDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
+class CourseDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for CourseDeleteView"""
     model = Course
 
@@ -316,31 +292,14 @@ class SubjectView(TeacherRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Subject.objects.filter(
-            course__teachers=self.request.user.profile.teacher).order_by('-id')
+        if self.request.user.is_superuser:
+            return Subject.objects.order_by('-id')
+        else:
+            return Subject.objects.filter(
+                course__teachers=self.request.user.profile.teacher).order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(SubjectView, self).get_context_data(**kwargs)
-        info = {
-            'title': 'Subject - TMS',
-            'sidebar': ['subject']
-        }
-        context['info'] = info
-        return context
-
-
-class SubjectSuperView(AdminRequiredMixin, ListView):
-    """docstring for SubjectView"""
-    model = Subject
-    context_object_name = 'list_subject'
-    template_name = 'admin/subject_super_index.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Subject.objects.order_by('-id')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         info = {
             'title': 'Subject - TMS',
             'sidebar': ['subject']
@@ -393,10 +352,18 @@ class SubjectUpdateView(TeacherRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        form.fields['course'] = djforms.ModelChoiceField(
-            queryset=Course.objects.filter(teachers__profile__user=self.request.user), widget=djforms.widgets.Select(
-                attrs={'class': 'form-control select2',
-                       'style': 'width: 100%;'}))
+        if self.request.user.is_superuser:
+            form.fields['course'] = djforms.ModelChoiceField(
+                queryset=Course.objects.filter(teachers=self.object.course.creator),
+                widget=djforms.widgets.Select(
+                    attrs={'class': 'form-control select2',
+                           'style': 'width: 100%;'}))
+        else:
+            form.fields['course'] = djforms.ModelChoiceField(
+                queryset=Course.objects.filter(teachers__profile__user=self.request.user),
+                widget=djforms.widgets.Select(
+                    attrs={'class': 'form-control select2',
+                           'style': 'width: 100%;'}))
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
@@ -425,7 +392,6 @@ class CommonContextSubject(object):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        teacher = self.request.user.profile.teacher
 
         info = {
             'title': 'Detail Subject - TMS',
@@ -433,20 +399,13 @@ class CommonContextSubject(object):
         }
         context['info'] = info
 
-        context['reviews'] = Review.objects.filter(
-            subject=self.object,
-            subject__course__teachers=teacher
-        ).order_by('-id')
+        context['reviews'] = Review.objects.filter(subject=self.object).order_by('-id')
 
         context['sessions'] = Session.objects.filter(subject=self.object)
 
-        context['tasks'] = Task.objects.filter(session__subject=self.object,
-                                               session__subject__course__teachers=teacher
-                                               ).order_by('-id')
+        context['tasks'] = Task.objects.filter(session__subject=self.object).order_by('-id')
 
-        context['endrolls'] = Enroll.objects.filter(session__subject=self.object,
-                                                    session__subject__course__teachers=teacher
-                                                    ).order_by('-id')
+        context['endrolls'] = Enroll.objects.filter(session__subject=self.object).order_by('-id')
         return context
 
 
@@ -476,8 +435,7 @@ class CreateSessionSubmit(TeacherRequiredMixin, CommonContextSubject,
     form_class = forms.SessionForm
 
     def get_success_url(self):
-        return reverse_lazy('admin:detail_subject',
-                            kwargs={'pk': self.object.pk})
+        return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.pk})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -516,30 +474,7 @@ class SubjectDetailView(TeacherRequiredMixin, CommonContextSubject, DetailView):
         return context
 
 
-class SubjectSuperDetailView(AdminRequiredMixin, DetailView):
-    model = Subject
-    template_name = 'admin/subject_super_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        info = {
-            'title': 'Detail Subject - TMS',
-            'sidebar': ['subject']
-        }
-        context['info'] = info
-
-        context['reviews'] = Review.objects.filter(subject=self.object).order_by('-id')
-
-        context['sessions'] = Session.objects.filter(subject=self.object)
-
-        context['tasks'] = Task.objects.filter(session__subject=self.object).order_by('-id')
-
-        context['endrolls'] = Enroll.objects.filter(session__subject=self.object).order_by('-id')
-        return context
-
-
-class SubjectDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
+class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for SubjectDeleteView"""
     model = Subject
 
@@ -634,7 +569,7 @@ class TaskUpdateView(TeacherRequiredMixin, UpdateView):
         return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.session.subject.id})
 
 
-class TaskDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
+class TaskDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for TaskDeleteView"""
     model = Task
 
@@ -649,7 +584,7 @@ class TaskDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
         return reverse_lazy('admin:detail_subject', kwargs={'pk': self.object.session.subject.pk})
 
 
-# Blogs Management
+# Blog Management
 
 class BlogView(TeacherRequiredMixin, ListView):
     """docstring for BlogView"""
@@ -659,30 +594,13 @@ class BlogView(TeacherRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Blog.objects.filter(teacher=self.request.user.profile.teacher).order_by('-id')
+        if self.request.user.is_superuser:
+            return Blog.objects.order_by('-id')
+        else:
+            return Blog.objects.filter(teacher=self.request.user.profile.teacher).order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super(BlogView, self).get_context_data(**kwargs)
-        info = {
-            'title': 'Blog - TMS',
-            'sidebar': ['blog']
-        }
-        context['info'] = info
-        return context
-
-
-class BlogSuperView(AdminRequiredMixin, ListView):
-    """docstring for BlogView"""
-    model = Blog
-    context_object_name = 'list_blog'
-    template_name = 'admin/blog_super_index.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Blog.objects.order_by('-id')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         info = {
             'title': 'Blog - TMS',
             'sidebar': ['blog']
@@ -735,7 +653,7 @@ class BlogUpdateView(TeacherRequiredMixin, UpdateView):
         return reverse('admin:list_blog')
 
 
-class BlogDeleteView(AdminTeacherForDeleteRequiredMixin, DeleteView):
+class BlogDeleteView(TeacherRequiredMixin, DeleteView):
     """docstring for BlogDeleteView"""
     model = Blog
 

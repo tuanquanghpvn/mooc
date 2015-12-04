@@ -31,6 +31,7 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
+                                <th>Author</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Status</th>
@@ -39,6 +40,7 @@
                             {% for item in list_blog %}
                                 <tr>
                                     <td>{{ item.id }}.</td>
+                                    <td>{{ item.teacher.username }}</td>
                                     <td>{{ item.title }}</td>
                                     <td>{{ item.description }}</td>
                                     <td>{{ item.get_status_display }}</td>

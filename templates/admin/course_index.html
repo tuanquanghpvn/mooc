@@ -31,6 +31,7 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
+                                <th>Author</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th class="text-center" style="width: 200px">Action</th>
@@ -38,8 +39,9 @@
                             {% for item in list_course %}
                                 <tr>
                                     <td>{{ item.id }}.</td>
+                                    <td>{{ item.creator }}</td>
                                     <td>{{ item.name }}</td>
-                                    <td>{{ item.description }}</td>                                    
+                                    <td>{{ item.description }}</td>
                                     <td class="text-center">                                        
                                         <a href="{% url 'admin:update_course' item.id %}">
                                             <span class="badge">Update</span>

@@ -15,7 +15,7 @@
         </div>
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
-            <li class="header">MAIN NAVIGATION</li>
+            <li class="header">Manager</li>
             {% if request.user.is_superuser %}
                 <li class="{% if 'dashboard' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:dashboard' %}">
@@ -42,27 +42,11 @@
                     <i class="fa fa-list"></i> <span>Apply Teacher</span>
                     </a>
                 </li>
-
-                <li class="header">For Teacher</li>
-
-                <li class="{% if 'course' in info.sidebar %} active {% endif %}">
-                    <a href="{% url 'admin:list_course_super' %}">
-                    <i class="fa fa-list"></i> <span>Course</span>
-                    </a>
-                </li>
-                <li class="{% if 'subject' in info.sidebar %} active {% endif %}">
-                    <a href="{% url 'admin:list_subject_super' %}">
-                    <i class="fa fa-list"></i> <span>Subject</span>
-                    </a>
-                </li>
-                <li class="{% if 'blog' in info.sidebar %} active {% endif %}">
-                    <a href="{% url 'admin:list_blog_super' %}">
-                    <i class="fa fa-list"></i> <span>Blog</span>
-                    </a>
-                </li>
             {% endif %}
 
             {% if request.user.profile.is_teacher %}
+                <li class="header">For Teacher</li>
+
                 <li class="{% if 'course' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:list_course' %}">
                     <i class="fa fa-list"></i> <span>Course</span>

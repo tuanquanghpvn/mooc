@@ -36,6 +36,7 @@
                                 <th>Email</th>
                                 <th>Date Join</th>
                                 <th>Last Login</th>
+                                <th class="text-center">Permission</th>
                                 <th class="text-center" style="width: 140px">Action</th>
                             </tr>
                             {% for item in list_teacher %}
@@ -52,6 +53,11 @@
                                     <td>{{ item.profile.user.email }}</td>
                                     <td>{{ item.profile.user.date_joined|date:'d/m/Y' }}</td>
                                     <td>{{ item.profile.user.last_login|date:'d/m/Y H:m:s' }}</td>
+                                    <td class="text-center">
+                                        {% if item.profile.user.is_superuser %}
+                                            <span class="badge bg-red">Admin</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-center">
                                         <a href="{% url 'admin:update_teacher' item.profile.user.id %}">
                                             <span class="badge">Update</span>

@@ -12,8 +12,8 @@
                 <div class="col-md-5">
                     <a href="{% url 'blog:detail' blog.pk blog.slug %}"><img src="{{ blog.get_image_url }}" alt="" class="img-responsive" /></a>
                     <div class="post-date">
-                        <div class="post-day">{{ blog.create_date|date:'d' }}</div>
-                        <div class="post-month">Sep</div>
+                        <div class="post-day">{{ blog.created_date|date:'d' }}</div>
+                        <div class="post-month">{{ blog.created_date|date:'M' }}</div>
                     </div>
                 </div>
                 <div class="col-md-7">

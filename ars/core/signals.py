@@ -14,9 +14,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         return
     profile = UserProfile.objects.create(user=instance)
     profile.save()
-    # if profile.user.is_superuser:
-    #     teacher = Teacher.objects.create(profile=profile)
-    #     teacher.save()
+    if profile.user.is_superuser:
+        teacher = Teacher.objects.create(profile=profile)
+        teacher.save()
     student = Student.objects.create(profile=profile)
     student.save()
 

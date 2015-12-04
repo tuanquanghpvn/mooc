@@ -32,6 +32,7 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
+                                <th>Author</th>
                                 <th>Name</th>
                                 <th>Course</th>
                                 <th>Description</th>
@@ -40,6 +41,7 @@
                             {% for item in list_subject %}
                                 <tr>
                                     <td>{{ item.id }}.</td>
+                                    <td>{{ item.course.creator }}</td>
                                     <td>
                                         <a href="{% url 'admin:detail_subject' item.id %}">{{ item.name }}</a>                                    
                                     </td>

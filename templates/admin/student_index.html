@@ -43,7 +43,7 @@
                                     </td>
                                     <td>{{ item.profile.user.email }}</td>
                                     <td>{{ item.profile.user.date_joined|date:'d/m/Y' }}</td>
-                                    <td>{{ item.profile.user.last_login|date:'d/m/Y H:M:s' }}</td>
+                                    <td>{{ item.profile.user.last_login|date:'d/m/Y H:i:s' }}</td>
                                     <td class="text-center">
                                         <a href="#" data-href="{% url 'admin:delete_student' item.profile.user.id %}" data-toggle="modal" data-target="#confirm-delete">
                                             <span class="badge bg-red">Delete</span>

@@ -13,8 +13,8 @@
             <div class="col-md-12">
                 <img src="{{ object.get_image_url }}" alt="" class="img-responsive post-cover" />
                 <div class="post-date">
-                    <div class="post-day">28</div>
-                    <div class="post-month">Sep</div>
+                    <div class="post-day">{{ object.created_date|date:'d' }}</div>
+                    <div class="post-month">{{ object.created_date|date:'M' }}</div>
                 </div>
                 <h1>{{ object.title }}</h1>
                 <div class="meta">
