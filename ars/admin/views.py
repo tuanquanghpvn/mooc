@@ -23,6 +23,7 @@ from ars.blog.models import Blog
 from ars.teachers.models import Teacher, ApplyForATeacher
 from ars.students.models import Student
 from django.core.exceptions import PermissionDenied
+from django.db.models import Avg, Count
 from . import forms
 
 
@@ -90,6 +91,8 @@ class DashboardView(AdminRequiredMixin, TemplateView):
             'course': Course.objects.count(),
             'subject': Subject.objects.count(),
             'teacher': Teacher.objects.count(),
+
+            'top_subject': Enroll.objects.all().annotate(student_count=Count('student'))[0:10],
         }
         context['info'] = info
         return context
@@ -400,11 +403,8 @@ class CommonContextSubject(object):
         context['info'] = info
 
         context['reviews'] = Review.objects.filter(subject=self.object).order_by('-id')
-
-        context['sessions'] = Session.objects.filter(subject=self.object)
-
+        context['sessions'] = Session.objects.filter(subject=self.object).order_by('-id')
         context['tasks'] = Task.objects.filter(session__subject=self.object).order_by('-id')
-
         context['endrolls'] = Enroll.objects.filter(session__subject=self.object).order_by('-id')
         return context
 

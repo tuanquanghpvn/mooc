@@ -1,23 +1,23 @@
 from django import forms
 from django.contrib.auth.models import User
-
 from ars.subjects.models import Subject
 from ars.subjects.models import Task, Session
-
 import re
+
 
 class SubjectForm(forms.ModelForm):
     """docstring for SubjectForm"""
+
     class Meta:
         model = Subject
         fields = ('categories', 'course', 'name', 'slug',
-                    'description', 'image')
+                  'description', 'image')
 
         widgets = {
             'categories': forms.widgets.SelectMultiple(
                 attrs={'class': 'form-control select2',
-                        'style': 'width: 100%;',
-                        'multiple': "multiple"}),
+                       'style': 'width: 100%;',
+                       'multiple': "multiple"}),
         }
 
 
@@ -40,6 +40,7 @@ class TeacherForm(forms.ModelForm):
             msg = "Password not contrain."
             self.add_error('re_password', msg)
 
+
 class TeacherUpdateForm(forms.ModelForm):
     password = forms.CharField(max_length=500, required=False)
     re_password = forms.CharField(max_length=500, required=False)
@@ -57,16 +58,16 @@ class TeacherUpdateForm(forms.ModelForm):
         re_password = cleaned_data.get("re_password")
 
         if password != re_password:
-            msg = "Password not contrain."
+            msg = "Password not contain."
             self.add_error('re_password', msg)
 
-class TaskForm(forms.ModelForm):
 
+class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('session', 'name', 'slug',
-                    'content', 'start_date', 'end_date',
-                    'link_youtube')
+                  'content', 'start_date', 'end_date',
+                  'link_youtube')
 
     def youtube_url_validation(self, url):
         youtube_regex = (
@@ -96,10 +97,10 @@ class TaskForm(forms.ModelForm):
             msg = "Youtube link not validate"
             self.add_error('link_youtube', msg)
 
-        return cleaned_data    
+        return cleaned_data
+
 
 class SessionForm(forms.ModelForm):
-
     class Meta:
         model = Session
         fields = ('subject', 'start_date', 'end_date')
