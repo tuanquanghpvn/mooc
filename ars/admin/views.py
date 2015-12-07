@@ -41,18 +41,9 @@ class TeacherRequiredMixin(object):
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_superuser and not request.user.profile.is_teacher:
-            raise PermissionDenied
+        # if request.user.is_superuser and not request.user.profile.is_teacher:
+        #     raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
-
-
-# Function
-class LoginRequiredMixin(object):
-    """docstring for LoginRequiredMixin"""
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
 # Login and dashboard Management
