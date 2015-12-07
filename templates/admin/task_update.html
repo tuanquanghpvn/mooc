@@ -84,7 +84,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
-                                        <input name="{{ form.start_date.html_name }}" value="{{ form.start_date.value|default:'' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                                        <input name="{{ form.start_date.html_name }}" value="{{ form.start_date.value|date:'d/m/Y' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
                                     </div>
                                     <span class="help-block">{{ form.start_date.errors }}</span>
                                 </div>
@@ -97,7 +97,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
-                                        <input name="{{ form.end_date.html_name }}" value="{{ form.end_date.value|default:'' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                                        <input name="{{ form.end_date.html_name }}" value="{{ form.end_date.value|date:'d/m/Y' }}" type="text" class="datemask form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
                                     </div>
                                     <span class="help-block">{{ form.end_date.errors }}</span>
                                 </div>
