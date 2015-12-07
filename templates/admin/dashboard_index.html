@@ -89,13 +89,17 @@
                             <th>Author</th>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Student Enroll</th>
                         </tr>
-                        {% for item in top_subject %}
+                        {% for item in info.top_subject %}
                         <tr>
                             <td>{{ item.session.subject.id }}.</td>
                             <td>{{ item.session.subject.course.creator }}</td>
-                            <td>{{ item.session.subject }}</td>
+                            <td>
+                                <a href="{% url 'admin:detail_subject' item.session.subject.id %}">{{ item.session.subject }}</a>
+                            </td>
                             <td>{{ item.session.description }}</td>
+                            <td>{{ item.student_count }}</td>
                         </tr>
                         {% endfor %}
                     </table>

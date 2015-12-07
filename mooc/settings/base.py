@@ -125,7 +125,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mooc',
         'HOST': '127.0.0.1',
-        'PASSWORD': 'Python123*',
+        'PASSWORD': 'abc!@#ABC',
         'USER': 'root',
         'PORT': '3306'
     }

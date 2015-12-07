@@ -75,6 +75,16 @@ class DashboardView(AdminRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
+        top_subject = Enroll.objects.values('session').annotate(student_count=Count('student')).order_by(
+            'student_count')
+        list_top = []
+        for item in top_subject:
+            obj = {
+                'session': Session.objects.get(id=item['session']),
+                'student_count': item['student_count'],
+            }
+            list_top.append(obj)
+
         info = {
             'title': 'Dashboard - TMS',
             'sidebar': ['dashboard'],
@@ -83,7 +93,7 @@ class DashboardView(AdminRequiredMixin, TemplateView):
             'subject': Subject.objects.count(),
             'teacher': Teacher.objects.count(),
 
-            'top_subject': Enroll.objects.all().annotate(student_count=Count('student'))[0:10],
+            'top_subject': list_top,
         }
         context['info'] = info
         return context
