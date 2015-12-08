@@ -280,10 +280,7 @@ class CourseDeleteView(TeacherRequiredMixin, DeleteView):
             raise PermissionDenied
 
     def get_success_url(self):
-        if self.request.user.is_superuser:
-            return reverse('admin:list_course')
-        else:
-            return reverse('admin:list_course_super')
+        return reverse('admin:list_course')
 
 
 # Subjects Management
@@ -487,10 +484,7 @@ class SubjectDeleteView(TeacherRequiredMixin, DeleteView):
             raise PermissionDenied
 
     def get_success_url(self):
-        if self.request.user.is_superuser:
-            return reverse('admin:list_subject_super')
-        else:
-            return reverse('admin:list_subject')
+        return reverse('admin:list_subject')
 
 
 # Sessions Management
