@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ars.reviews',
     'ars.about',
     'ars.comments',
+    'ars.exams',
 
     # The Django sites framework is required
     'django.contrib.sites',
@@ -125,7 +126,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mooc',
         'HOST': '127.0.0.1',
-        'PASSWORD': 'Python123*',
+        'PASSWORD': 'abc!@#ABC',
         'USER': 'root',
         'PORT': '3306'
     }
