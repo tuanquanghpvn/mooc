@@ -2,10 +2,12 @@ from django.db import models
 from ars.core.models import Timestampable, Describable
 from ars.subjects.models import Subject
 from ars.categories.models import Category
+from ars.teachers.models import Teacher
 
 
 # Create your models here.
 class Question(Timestampable):
+    teacher = models.ForeignKey(Teacher)
     category = models.ForeignKey(Category)
     content = models.CharField(max_length=255)
 
@@ -23,6 +25,7 @@ class Answer(models.Model):
 
 
 class Exam(Describable, Timestampable):
+    teacher = models.ForeignKey(Teacher)
     subject = models.ForeignKey(Subject)
     questions = models.ManyToManyField(Question, related_name='exams', db_table='exam_question')
 

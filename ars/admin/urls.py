@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import (
     blog, category, course, dashboard, session, subject,
-    task, teacher, student
+    task, teacher, student, exam
 )
 
 urlpatterns = [
@@ -96,4 +96,28 @@ urlpatterns = [
     url(r'^student/$', student.StudentView.as_view(), name='list_student'),
     url(r'^student/delete/(?P<pk>[0-9]+)/$', student.StudentDeleteView.as_view(),
         name='delete_student'),
+
+    #############################################################
+    #############################################################
+    #############################################################
+    # Url question
+    url(r'^question/$', exam.QuestionView.as_view(), name='list_question'),
+    url(r'^question/create/$', exam.QuestionCreateView.as_view(),
+        name='create_question'),
+    url(r'^question/update/(?P<pk>[0-9]+)/$', exam.QuestionUpdateView.as_view(),
+        name='update_question'),
+    url(r'^question/delete/(?P<pk>[0-9]+)/$', exam.QuestionDeleteView.as_view(),
+        name='delete_question'),
+
+    #############################################################
+    #############################################################
+    #############################################################
+    # Url exam
+    url(r'^exam/$', exam.ExamView.as_view(), name='list_exam'),
+    url(r'^exam/create/$', exam.ExamCreateView.as_view(),
+        name='create_exam'),
+    url(r'^exam/update/(?P<pk>[0-9]+)/$', exam.ExamUpdateView.as_view(),
+        name='update_exam'),
+    url(r'^exam/delete/(?P<pk>[0-9]+)/$', exam.ExamDeleteView.as_view(),
+        name='delete_exam'),
 ]

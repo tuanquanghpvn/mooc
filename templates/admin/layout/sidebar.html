@@ -62,6 +62,20 @@
                     <i class="fa fa-list"></i> <span>Blog</span>
                     </a>
                 </li>
+
+                <li class="header">Exam</li>
+
+                <li class="{% if 'question' in info.sidebar %} active {% endif %}">
+                    <a href="{% url 'admin:list_question' %}">
+                    <i class="fa fa-list"></i> <span>Question</span>
+                    </a>
+                </li>
+
+                <li class="{% if 'exam' in info.sidebar %} active {% endif %}">
+                    <a href="{% url 'admin:list_exam' %}">
+                    <i class="fa fa-list"></i> <span>Exam</span>
+                    </a>
+                </li>
             {% endif %}
         </ul>
     </section>
