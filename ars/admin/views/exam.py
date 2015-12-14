@@ -13,6 +13,7 @@ from django.forms import modelformset_factory, formset_factory, BaseFormSet, Bas
 from django.db import transaction
 from ars.exams.models import Answer, Exam, Question
 from ars.subjects.models import Subject
+from ars.categories.models import Category
 
 
 class QuestionForm(forms.ModelForm):
@@ -187,13 +188,25 @@ class QuestionDeleteView(TeacherRequiredMixin, DeleteView):
 class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ('subject', 'name', 'questions', 'description')
+        fields = ('subject', 'name', 'category', 'description', 'num_question')
 
         widgets = {
+            'category': forms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;', 'placeholder': 'Enter category'}),
             'subject': forms.widgets.Select(
                 attrs={'class': 'form-control select2',
                        'style': 'width: 100%;', 'placeholder': 'Enter subject'}),
         }
+
+    def clean(self):
+        cleaned_data = super(ExamForm, self).clean()
+        category = cleaned_data.get('category', None)
+        count = Question.objects.filter(category=category).count()
+        if count == 0 and category:
+            self.add_error('category', "You don't have question in category selected!")
+        # elif count < 10:
+        #     self.add_error('category', "You need more 10 question in category!")
 
 
 class ExamView(TeacherRequiredMixin, ListView):
@@ -245,6 +258,12 @@ class ExamCreateView(TeacherRequiredMixin, CreateView):
         context['info'] = info
         return context
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.teacher = self.request.user.profile.teacher
+        instance.save()
+        return super(ExamCreateView, self).form_valid(form)
+
     def get_success_url(self):
         return reverse('admin:list_exam')
 
@@ -253,7 +272,18 @@ class ExamUpdateView(TeacherRequiredMixin, UpdateView):
     """docstring for ExamUpdateView"""
     model = Exam
     template_name = 'admin/exam_update.html'
-    fields = ['subject', 'content']
+    form_class = ExamForm
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        course_list = Course.objects.filter(teachers=self.object.teacher)
+        djform = self.get_form()
+        djform.fields['subject'] = forms.ModelChoiceField(
+            queryset=Subject.objects.filter(course__in=course_list),
+            widget=forms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;'}))
+        return self.render_to_response(self.get_context_data(form=djform))
 
     def get_context_data(self, **kwargs):
         context = super(ExamUpdateView, self).get_context_data(**kwargs)

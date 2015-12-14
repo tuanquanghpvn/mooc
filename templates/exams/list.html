@@ -1,0 +1,54 @@
+{% extends 'layout/base.html' %}
+{% load staticfiles %}
+
+{% block related_subjects %}
+{% endblock related_subjects %}
+
+{% block content %}
+    <!-- ==== BLOG START == -->
+    {{ list_exam }}
+    <div class="col-sm-8">
+        {% for exam in object_list %}
+            <div class="post row" data-scroll-reveal>
+                <div class="col-md-5">
+                    <a href="{% url 'exams:take' exam.pk %}"><img src="" alt="{{ exam.name }}" class="img-responsive" /></a>
+                    <div class="post-date">
+                        <div class="post-day">{{ exam.created_date|date:'d' }}</div>
+                        <div class="post-month">{{ exam.created_date|date:'M' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <h3><a href="{% url 'exams:take' exam.category.pk %}">{{ exam.name }}</a></h3>
+                    <div class="meta">
+                        <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' exam.teacher.pk %}">{{ exam.teacher.username }}</a></span>
+                        <!--<span><i class="fa fa-comments"></i><a href="#"></a></span>-->
+                    </div>
+                    <p class="intro">{{ exam.description }}.<br>
+                    <a href="{% url 'exams:take' exam.category.pk %}">Take exam </a></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <hr>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- ==== PAGINATION START == -->
+        <div data-scroll-reveal-initialized="true" style="-webkit-transform: translatey(0);transform: translatey(0);opacity: 1;-webkit-transition: -webkit-transform 0.66s ease-in-out 0s,  opacity 0.66s ease-in-out 0s;transition: transform 0.66s ease-in-out 0s, opacity 0.66s ease-in-out 0s;-webkit-perspective: 1000;-webkit-backface-visibility: hidden;" class="row" data-scroll-reveal="">
+            <div class="col-sm-6">
+                {% if page_obj.has_previous %}                        
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary lesson-prev"><i class="fa fa-caret-left"></i> &nbsp; Previous</a>
+                {% endif %}
+            </div>
+
+            <div class="col-sm-6 text-right">
+                {% if page_obj.has_next %}                        
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary lesson-next">Next &nbsp; <i class="fa fa-caret-right"></i></a>                        
+                {% endif %}
+            </div>
+        </div>
+        <!-- ==== PAGINATION END == -->
+    </div>
+    <!-- ==== BLOG END == -->
+{% endblock %}

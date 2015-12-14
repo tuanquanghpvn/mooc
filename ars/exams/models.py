@@ -27,7 +27,8 @@ class Answer(models.Model):
 class Exam(Describable, Timestampable):
     teacher = models.ForeignKey(Teacher)
     subject = models.ForeignKey(Subject)
-    questions = models.ManyToManyField(Question, related_name='exams', db_table='exam_question')
+    category = models.ForeignKey(Category)
+    num_question = models.IntegerField()
 
     class Meta:
         db_table = 'exam'
