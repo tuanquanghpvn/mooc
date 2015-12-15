@@ -1,15 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form method="POST" action="">
-    {% csrf_token %}
-    {{ form.management_form }}
-    {{ form }}
-    <input type="submit">
-</form>
-</body>
-</html>
+{% extends 'layout/base.html' %}
+{% load staticfiles %}
+
+{% block cssfiles %}
+<link rel="stylesheet" href="{% static 'frontend/wufooTheme2/css/form.css' %}" type="text/css"/>
+{% endblock %}
+
+{% block related_subjects %}
+{% endblock related_subjects %}
+
+{% block content %}
+<!-- ==== BLOG START == -->
+<div class="col-sm-8">
+    <h1>Take this example</h1>
+    <hr>
+    {% if total_correct%}
+        <p class="tab-pane">Total correct: {{ total_correct }}</p>
+    {% else %}
+        {% if form.errors %}
+            <p class="text-danger">Please choose all question !</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="POST" action='' class="wufoo">
+        {% csrf_token %}
+        {{ form.management_form }}
+
+        <ul>
+            {% for frm in form %}
+            <li>
+                {{ frm.id }}
+                {{ frm.content }}
+                <label class="desc">{{ forloop.counter }}. {{ frm.content.value }}</label>
+
+                {% for radio in frm.answer %}
+                    <div style="display: block;">
+                        {{ radio }}
+                    </div>
+                {% endfor %}
+            </li>
+            {% endfor %}
+            <li class="buttons ">
+                <div>
+                    <input id="saveForm" name="saveForm" class="btTxt submit" value="Submit" type="submit">
+                </div>
+            </li>
+        </ul>
+    </form>
+</div>
+<!-- ==== BLOG END == -->
+{% endblock %}
