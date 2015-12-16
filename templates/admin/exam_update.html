@@ -51,10 +51,22 @@
                                 <span class="help-block">{{ form.num_question.errors }}</span>
                             </div>
 
+                            <div class="form-group {% if form.minute.errors %} has-error {% endif %}">
+                                <label>Minute:</label>
+                                <input name="{{ form.minute.name }}" type="text" class="form-control" value="{{ form.minute.value|default_if_none:0 }}" placeholder="Enter minute">
+                                <span class="help-block">{{ form.minute.errors }}</span>
+                            </div>
+
                             <div class="form-group {% if form.name.errors %} has-error {% endif %}">
                                 <label>Exam:</label>
                                 <input name="{{ form.name.name }}" type="text" class="form-control" value="{{ form.name.value|default_if_none:'' }}" placeholder="Enter name">
                                 <span class="help-block">{{ form.name.errors }}</span>
+                            </div>
+
+                            <div class="form-group {% if form.image.errors %} has-error {% endif %}">
+                                <label>Image</label>
+                                <input name="{{ form.image.name }}" type="file"/>
+                                <span class="help-block">{{ form.image.errors }}</span>
                             </div>
 
                             <div class="form-group {% if form.description.errors %} has-error {% endif %}">

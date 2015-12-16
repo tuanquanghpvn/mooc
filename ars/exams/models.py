@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from ars.core.models import Timestampable, Describable
 from ars.subjects.models import Subject
 from ars.categories.models import Category
@@ -29,6 +30,13 @@ class Exam(Describable, Timestampable):
     subject = models.ForeignKey(Subject)
     category = models.ForeignKey(Category)
     num_question = models.IntegerField()
+    minute = models.IntegerField(blank=False, default=0)
+    image = models.ImageField(upload_to=settings.EXAM_DIR, max_length=255, default='', blank=False)
+
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return settings.DEFAULT_IMAGE
 
     class Meta:
         db_table = 'exam'

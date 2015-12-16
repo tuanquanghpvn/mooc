@@ -11,13 +11,13 @@
 {% block content %}
 <!-- ==== BLOG START == -->
 <div class="col-sm-8">
-    <h1>Take this example</h1>
+    <h1>{{ exam.name }}</h1>
     <hr>
-    {% if total_correct%}
-        <p class="tab-pane">Total correct: {{ total_correct }}</p>
+    {% if total_correct %}
+        <p class="text-danger">Total correct: {{ total_correct }} / {{ exam.num_question }}</p>
     {% else %}
         {% if form.errors %}
-            <p class="text-danger">Please choose all question !</p>
+        <p class="text-danger">Please choose all question !</p>
         {% endif %}
     {% endif %}
 
@@ -32,10 +32,13 @@
                 {{ frm.content }}
                 <label class="desc">{{ forloop.counter }}. {{ frm.content.value }}</label>
 
-                {% for radio in frm.answer %}
-                    <div style="display: block;">
-                        {{ radio }}
-                    </div>
+                {% for key, value in frm.fields.answer.choices %}
+                <div style="display: block;">
+                    <input {% if frm.answer.value|upper == key|upper %} checked {% endif %}
+                           id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
+                           name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>
+                    <label style="display: inline !important;" class="{% if frm.answer.value|upper == key|upper and total_correct and value.correct %} text-success {% elif frm.answer.value|upper == key|upper and total_correct and not value.correct %} text-danger {% endif %}">{{ value.content }}</label>
+                </div>
                 {% endfor %}
             </li>
             {% endfor %}

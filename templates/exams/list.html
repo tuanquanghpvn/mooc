@@ -11,20 +11,20 @@
         {% for exam in object_list %}
             <div class="post row" data-scroll-reveal>
                 <div class="col-md-5">
-                    <a href="{% url 'exams:take' exam.pk %}"><img src="" alt="{{ exam.name }}" class="img-responsive" /></a>
+                    <a href="{% url 'exams:take' exam.pk %}"><img src="{{ exam.get_image_url }}" alt="{{ exam.name }}" class="img-responsive" /></a>
                     <div class="post-date">
                         <div class="post-day">{{ exam.created_date|date:'d' }}</div>
                         <div class="post-month">{{ exam.created_date|date:'M' }}</div>
                     </div>
                 </div>
                 <div class="col-md-7">
-                    <h3><a href="{% url 'exams:take' exam.category.pk %}">{{ exam.name }}</a></h3>
+                    <h3><a href="{% url 'exams:take' exam.pk %}">{{ exam.name }}</a></h3>
                     <div class="meta">
                         <span><i class="fa fa-user"></i><a href="{% url 'teachers:detail' exam.teacher.pk %}">{{ exam.teacher.username }}</a></span>
                         <!--<span><i class="fa fa-comments"></i><a href="#"></a></span>-->
                     </div>
                     <p class="intro">{{ exam.description }}.<br>
-                    <a href="{% url 'exams:take' exam.category.pk %}">Take exam </a></p>
+                    <a href="{% url 'exams:take' exam.pk %}">Take exam </a></p>
                 </div>
             </div>
             <div class="row">
