@@ -42,16 +42,16 @@
 
                 {% for key, value in frm.fields.answer.choices %}
                 <div style="display: block;">
-                    {% if frm.type.value == 1 %}
-                        <input {% if frm.answer.value|upper == key|upper %} checked {% endif %}
+                    {% if frm.type.value|upper == '1' %}
+                        <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
                                id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
                                name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>
-                    {% elif frm.type.value == 2 %}
-                        <input {% if frm.answer.value|upper == key|upper %} checked {% endif %}
+                    {% elif frm.type.value|upper == '2' %}
+                        <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
                                id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
                                name="form-{{ forloop.parentloop.counter0 }}-answer" type="checkbox" value="{{key}}"/>
                     {% endif %}
-                    <label style="display: inline !important;" class="{% if frm.answer.value|upper == key|upper and total_correct and value.correct %} text-success {% elif frm.answer.value|upper == key|upper and total_correct and not value.correct %} text-danger {% endif %}">{{ value.content }}</label>
+                    <label style="display: inline !important;" class="{% if key|upper in frm.answer.value|upper and total_correct and value.correct %} text-success {% elif key|upper in frm.answer.value|upper and total_correct and not value.correct %} text-danger {% endif %}">{{ value.content }}</label>
                 </div>
                 {% endfor %}
             </li>

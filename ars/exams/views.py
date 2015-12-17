@@ -94,7 +94,7 @@ class TakeExamView(BaseView, FormView):
                 elif frm.cleaned_data['type'] == 2:
                     list_answer = frm.cleaned_data['answer']
                     question = frm.cleaned_data['id']
-                    count_question_correct = Answer.objects.filter(question__id=question).filter(correct=True).count()
+                    count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
                     if len(list_answer) == count_question_correct:
                         success = True
                         for answer_check in list_answer:
