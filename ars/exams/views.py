@@ -52,14 +52,14 @@ class TakeExamView(BaseView, FormView):
             formset = QuestionFormSet(self.request.POST)
         else:
             # queryset = Question.objects.filter(category=category)
-            queryset = Question.objects.filter(category=category).order_by('?')[:exam.num_question]
+            queryset = Question.objects.filter(category=category, teacher=exam.teacher).order_by('?')[:exam.num_question]
             formset = QuestionFormSet(queryset=queryset)
         return formset
 
     def get_form_kwargs(self):
         exam = Exam.objects.get(id=self.kwargs['pk'])
         category = exam.category
-        queryset = Question.objects.filter(category=category)[:exam.num_question]
+        queryset = Question.objects.filter(category=category, teacher=exam.teacher)[:exam.num_question]
         kwargs = super().get_form_kwargs()
         kwargs['data'] = self.request.POST
         kwargs['queryset'] = queryset
