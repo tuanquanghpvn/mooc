@@ -27,8 +27,11 @@ class ListExamView(BaseView, ListView):
         return context
 
 
-QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content',), widgets={'id': forms.HiddenInput,
-                                                                                         'content': forms.HiddenInput},
+QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content', 'type', 'level'),
+                                           widgets={'id': forms.HiddenInput,
+                                                    'content': forms.HiddenInput,
+                                                    'type': forms.HiddenInput,
+                                                    'level': forms.HiddenInput},
                                            extra=0)
 AnswerFormSet = modelformset_factory(Answer, fields=('id', 'content',), widgets={'id': forms.HiddenInput}, extra=0)
 
@@ -36,10 +39,18 @@ AnswerFormSet = modelformset_factory(Answer, fields=('id', 'content',), widgets=
 class QuestionFormSet(QuestionFormsetBase):
     def add_fields(self, form, index):
         super(QuestionFormSet, self).add_fields(form, index)
-        answer = Answer.objects.filter(question__id=form.initial['id'])
+        answer = Answer.objects.filter(question__id=form.initial['id'], question__level__lte=form.initial['level'])
         answer = [(x.id, x) for x in answer]
-        form.fields['answer'] = forms.ChoiceField(choices=answer,
-                                                  widget=forms.RadioSelect(attrs={'class': 'field'}))
+
+        # One choice
+        if form.initial['type'] == 1:
+            form.fields['answer'] = forms.MultipleChoiceField(choices=answer,
+                                                              widget=forms.CheckboxSelectMultiple(
+                                                                  attrs={'class': 'field'}))
+        # Multiple choice
+        elif form.initial['type'] == 2:
+            form.fields['answer'] = forms.ChoiceField(choices=answer,
+                                                      widget=forms.RadioSelect(attrs={'class': 'field'}))
 
 
 class TakeExamView(BaseView, FormView):
@@ -47,19 +58,20 @@ class TakeExamView(BaseView, FormView):
 
     def get_form(self, form_class=None):
         exam = Exam.objects.get(id=self.kwargs['pk'])
-        category = exam.category
+        group = exam.group
         if self.request.method == 'POST':
             formset = QuestionFormSet(self.request.POST)
         else:
-            # queryset = Question.objects.filter(category=category)
-            queryset = Question.objects.filter(category=category, teacher=exam.teacher).order_by('?')[:exam.num_question]
+            # queryset = Question.objects.filter(group=group)
+            queryset = Question.objects.filter(group=group, teacher=exam.teacher).order_by('?')[
+                       :exam.num_question]
             formset = QuestionFormSet(queryset=queryset)
         return formset
 
     def get_form_kwargs(self):
         exam = Exam.objects.get(id=self.kwargs['pk'])
-        category = exam.category
-        queryset = Question.objects.filter(category=category, teacher=exam.teacher)[:exam.num_question]
+        group = exam.group
+        queryset = Question.objects.filter(group=group, teacher=exam.teacher)[:exam.num_question]
         kwargs = super().get_form_kwargs()
         kwargs['data'] = self.request.POST
         kwargs['queryset'] = queryset

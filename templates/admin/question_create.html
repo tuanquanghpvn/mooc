@@ -32,6 +32,24 @@
                         <!-- /.box-header -->
                         <div class="box-body">
                             {% csrf_token %}
+                            <div class="form-group {% if form.group.errors %} has-error {% endif %}">
+                                {{ form.group.label_tag }}
+                                {{ form.group }}
+                                <span class="help-block">{{ form.group.errors }}</span>
+                            </div>
+
+                            <div class="form-group {% if form.level.errors %} has-error {% endif %}">
+                                {{ form.level.label_tag }}
+                                {{ form.level }}
+                                <span class="help-block">{{ form.level.errors }}</span>
+                            </div>
+
+                            <div class="form-group {% if form.type.errors %} has-error {% endif %}">
+                                {{ form.type.label_tag }}
+                                {{ form.type }}
+                                <span class="help-block">{{ form.type.errors }}</span>
+                            </div>
+
                             <div class="form-group {% if form.category.errors %} has-error {% endif %}">
                                 {{ form.category.label_tag }}
                                 {{ form.category }}

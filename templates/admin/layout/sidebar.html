@@ -27,6 +27,11 @@
                     <i class="fa fa-list"></i> <span>Category</span>
                     </a>
                 </li>
+                <li class="{% if 'group' in info.sidebar %} active {% endif %}">
+                    <a href="{% url 'admin:list_group' %}">
+                    <i class="fa fa-list"></i> <span>Group</span>
+                    </a>
+                </li>
                 <li class="{% if 'teacher' in info.sidebar %} active {% endif %}">
                     <a href="{% url 'admin:list_teacher' %}">
                     <i class="fa fa-list"></i> <span>Teacher</span>

@@ -27,6 +27,18 @@ urlpatterns = [
     #############################################################
     #############################################################
     #############################################################
+    # Url group
+    url(r'^group/$', exam.GroupView.as_view(), name='list_group'),
+    url(r'^group/create/$', exam.GroupCreateView.as_view(),
+        name='create_group'),
+    url(r'^group/update/(?P<pk>[0-9]+)/$',
+        exam.GroupUpdateView.as_view(), name='update_group'),
+    url(r'^group/delete/(?P<pk>[0-9]+)/$',
+        exam.GroupDeleteView.as_view(), name='delete_group'),
+
+    #############################################################
+    #############################################################
+    #############################################################
     # Url course
     url(r'^course/$', course.CourseView.as_view(), name='list_course'),
     url(r'^course/create/$', course.CourseCreateView.as_view(),

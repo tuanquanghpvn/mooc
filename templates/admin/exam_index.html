@@ -31,15 +31,19 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Subject</th>
+                                <th>Group</th>
                                 <th>Exam</th>
+                                <th>Num question</th>
+                                <th>Minute</th>
                                 <th class="text-center" style="width: 200px">Action</th>
                             </tr>
                             {% for item in list_exam %}
                                 <tr>
                                     <td>{{ item.id }}.</td>
-                                    <td>{{ item.subject }}</td>
-                                    <td>{{ item.content }}</td>
+                                    <td>{{ item.group }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.num_question }}</td>
+                                    <td>{{ item.minute }}</td>
                                     <td class="text-center">
                                         <a href="{% url 'admin:update_exam' item.id %}">
                                             <span class="badge">Update</span>

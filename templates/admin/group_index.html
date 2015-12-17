@@ -8,12 +8,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Question
+            Group
             <small>List</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="{% url 'admin:dashboard' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Question</li>
+            <li class="active">Group</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -23,7 +23,7 @@
                 <div class="box box-danger">
                     <div class="box-header with-border">
                         <div class="pull-right">
-                            <a class="btn btn-xs btn-warning" href="{% url 'admin:create_question' %}">New Question</a>
+                            <a class="btn btn-xs btn-warning" href="{% url 'admin:create_group' %}">New Group</a>
                         </div>
                     </div>
                     <!-- /.box-header -->
@@ -31,23 +31,20 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Group</th>
-                                <th>Type</th>
-                                <th>Level</th>
+                                <th>Name</th>
+                                <th>Description</th>
                                 <th class="text-center" style="width: 200px">Action</th>
                             </tr>
-                            {% for item in list_question %}
+                            {% for item in list_group %}
                                 <tr>
                                     <td>{{ item.id }}.</td>
-                                    <td>{{ item.group }}</td>
-                                    <td>{{ item.get_type_display }}</td>
-                                    <td>{{ item.get_level_display }}</td>
-                                    <td>{{ item.content }}</td>
-                                    <td class="text-center">
-                                        <a href="{% url 'admin:update_question' item.id %}">
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.description }}</td>                                    
+                                    <td class="text-center">                                        
+                                        <a href="{% url 'admin:update_group' item.id %}">
                                             <span class="badge">Update</span>
                                         </a>
-                                        <a href="#" data-href="{% url 'admin:delete_question' item.id %}" data-toggle="modal" data-target="#confirm-delete">
+                                        <a href="#" data-href="{% url 'admin:delete_group' item.id %}" data-toggle="modal" data-target="#confirm-delete">
                                             <span class="badge bg-red">Delete</span>
                                         </a>
                                     </td>

@@ -42,7 +42,11 @@
                 <div style="display: block;">
                     <input {% if frm.answer.value|upper == key|upper %} checked {% endif %}
                            id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
-                           name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>
+                           name="form-{{ forloop.parentloop.counter0 }}-answer" type="checkbox" value="{{key}}"/>
+
+                    <!--<input {% if frm.answer.value|upper == key|upper %} checked {% endif %}-->
+                           <!--id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"-->
+                           <!--name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>-->
                     <label style="display: inline !important;" class="{% if frm.answer.value|upper == key|upper and total_correct and value.correct %} text-success {% elif frm.answer.value|upper == key|upper and total_correct and not value.correct %} text-danger {% endif %}">{{ value.content }}</label>
                 </div>
                 {% endfor %}

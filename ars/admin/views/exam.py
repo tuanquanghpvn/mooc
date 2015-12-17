@@ -1,28 +1,102 @@
 import traceback
-
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView, UpdateView, DeleteView, ListView
 )
 from django.core.exceptions import PermissionDenied
-
 from ars.courses.models import Course
-from .dashboard import TeacherRequiredMixin
+from .dashboard import TeacherRequiredMixin, AdminRequiredMixin
 from django import forms
 from django.forms import modelformset_factory, formset_factory, BaseFormSet, BaseModelFormSet
 from django.db import transaction
 from ars.exams.models import Answer, Exam, Question
 from ars.subjects.models import Subject
 from ars.categories.models import Category
+from ars.exams.models import Group
 
+
+# Group Management
+
+class GroupView(AdminRequiredMixin, ListView):
+    """docstring for GroupView"""
+    model = Group
+    context_object_name = 'list_group'
+    template_name = 'admin/group_index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Group - TMS',
+            'sidebar': ['group']
+        }
+        context['info'] = info
+        return context
+
+
+class GroupCreateView(AdminRequiredMixin, CreateView):
+    """docstring for GroupCreateView"""
+    model = Group
+    template_name = 'admin/group_create.html'
+    fields = ['name', 'description']
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCreateView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Create Group - TMS',
+            'sidebar': ['group']
+        }
+        context['info'] = info
+        return context
+
+    def get_success_url(self):
+        return reverse('admin:list_group')
+
+
+class GroupUpdateView(AdminRequiredMixin, UpdateView):
+    """docstring for GroupUpdateView"""
+    model = Group
+    template_name = 'admin/group_update.html'
+    fields = ['name', 'description']
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupUpdateView, self).get_context_data(**kwargs)
+        info = {
+            'title': 'Update Group - TMS',
+            'sidebar': ['group']
+        }
+        context['info'] = info
+        return context
+
+    def get_success_url(self):
+        return reverse('admin:list_group')
+
+
+class GroupDeleteView(AdminRequiredMixin, DeleteView):
+    """docstring for GroupDeleteView"""
+    model = Group
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('admin:list_group')
+
+
+# Extra
 
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ('content', 'category')
+        fields = ('content', 'group', 'level', 'type')
 
         widgets = {
-            'category': forms.widgets.Select(
+            'group': forms.widgets.Select(
+                attrs={'class': 'form-control custom-select2',
+                       'style': 'width: 100%;'}),
+            'level': forms.widgets.Select(
+                attrs={'class': 'form-control custom-select2',
+                       'style': 'width: 100%;'}),
+            'type': forms.widgets.Select(
                 attrs={'class': 'form-control custom-select2',
                        'style': 'width: 100%;'}),
         }
@@ -188,25 +262,22 @@ class QuestionDeleteView(TeacherRequiredMixin, DeleteView):
 class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ('subject', 'name', 'category', 'description', 'num_question', 'minute')
+        fields = ('name', 'group', 'description', 'num_question', 'minute')
 
         widgets = {
-            'category': forms.widgets.Select(
+            'group': forms.widgets.Select(
                 attrs={'class': 'form-control select2',
                        'style': 'width: 100%;', 'placeholder': 'Enter category'}),
-            'subject': forms.widgets.Select(
-                attrs={'class': 'form-control select2',
-                       'style': 'width: 100%;', 'placeholder': 'Enter subject'}),
         }
 
     def clean(self):
         cleaned_data = super(ExamForm, self).clean()
-        category = cleaned_data.get('category', None)
-        count = Question.objects.filter(category=category).count()
-        if count == 0 and category:
-            self.add_error('category', "You don't have question in category selected!")
-        # elif count < 10:
-        #     self.add_error('category', "You need more 10 question in category!")
+        group = cleaned_data.get('group', None)
+        count = Question.objects.filter(group=group).count()
+        if count == 0 and group:
+            self.add_error('group', "You don't have question in category selected!")
+            # elif count < 10:
+            #     self.add_error('group', "You need more 10 question in group!")
 
 
 class ExamView(TeacherRequiredMixin, ListView):
@@ -238,17 +309,6 @@ class ExamCreateView(TeacherRequiredMixin, CreateView):
     template_name = 'admin/exam_create.html'
     form_class = ExamForm
 
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        course_list = Course.objects.filter(teachers__profile__user=self.request.user)
-        djform = self.get_form()
-        djform.fields['subject'] = forms.ModelChoiceField(
-            queryset=Subject.objects.filter(course__in=course_list),
-            widget=forms.widgets.Select(
-                attrs={'class': 'form-control select2',
-                       'style': 'width: 100%;'}))
-        return self.render_to_response(self.get_context_data(form=djform))
-
     def get_context_data(self, **kwargs):
         context = super(ExamCreateView, self).get_context_data(**kwargs)
         info = {
@@ -273,17 +333,6 @@ class ExamUpdateView(TeacherRequiredMixin, UpdateView):
     model = Exam
     template_name = 'admin/exam_update.html'
     form_class = ExamForm
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        course_list = Course.objects.filter(teachers=self.object.teacher)
-        djform = self.get_form()
-        djform.fields['subject'] = forms.ModelChoiceField(
-            queryset=Subject.objects.filter(course__in=course_list),
-            widget=forms.widgets.Select(
-                attrs={'class': 'form-control select2',
-                       'style': 'width: 100%;'}))
-        return self.render_to_response(self.get_context_data(form=djform))
 
     def get_context_data(self, **kwargs):
         context = super(ExamUpdateView, self).get_context_data(**kwargs)

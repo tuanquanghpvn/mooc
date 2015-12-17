@@ -8,15 +8,13 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('teachers', '0003_applyforateacher'),
-        ('categories', '0001_initial'),
-        ('subjects', '0009_remove_task_image'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Answer',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('content', models.CharField(max_length=255)),
                 ('correct', models.BooleanField()),
             ],
@@ -27,33 +25,57 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Exam',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('modified_date', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(max_length=300)),
                 ('description', models.TextField(default='', blank=True)),
                 ('num_question', models.IntegerField()),
-                ('category', models.ForeignKey(to='categories.Category')),
-                ('subject', models.ForeignKey(to='subjects.Subject')),
-                ('teacher', models.ForeignKey(to='teachers.Teacher')),
+                ('minute', models.IntegerField()),
+                ('image', models.ImageField(default='', upload_to='exams', max_length=255)),
             ],
             options={
                 'db_table': 'exam',
             },
         ),
         migrations.CreateModel(
+            name='Group',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(max_length=300)),
+                ('description', models.TextField(default='', blank=True)),
+            ],
+            options={
+                'db_table': 'group',
+            },
+        ),
+        migrations.CreateModel(
             name='Question',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('modified_date', models.DateTimeField(auto_now=True)),
                 ('content', models.CharField(max_length=255)),
-                ('category', models.ForeignKey(to='categories.Category')),
+                ('level', models.IntegerField(default=1, choices=[(1, 'Level 1'), (2, 'Level 2'), (3, 'Level 3')])),
+                ('type', models.IntegerField(default=1, choices=[(1, 'One choice'), (2, 'Multiple choice')])),
+                ('group', models.ForeignKey(to='exams.Group')),
                 ('teacher', models.ForeignKey(to='teachers.Teacher')),
             ],
             options={
                 'db_table': 'question',
             },
+        ),
+        migrations.AddField(
+            model_name='exam',
+            name='group',
+            field=models.ForeignKey(to='exams.Group'),
+        ),
+        migrations.AddField(
+            model_name='exam',
+            name='teacher',
+            field=models.ForeignKey(to='teachers.Teacher'),
         ),
         migrations.AddField(
             model_name='answer',
