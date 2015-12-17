@@ -30,7 +30,7 @@ class Exam(Describable, Timestampable):
     subject = models.ForeignKey(Subject)
     category = models.ForeignKey(Category)
     num_question = models.IntegerField()
-    minute = models.IntegerField(blank=False, default=0)
+    minute = models.IntegerField()
     image = models.ImageField(upload_to=settings.EXAM_DIR, max_length=255, default='', blank=False)
 
     def get_image_url(self):

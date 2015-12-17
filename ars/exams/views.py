@@ -4,6 +4,9 @@ from django import forms
 from django.forms import modelformset_factory
 from ars.core.views import BaseView
 from ars.exams.models import Exam, Question, Answer
+from datetime import datetime
+from ars.core import utils
+from datetime import timedelta
 import traceback
 
 
@@ -48,8 +51,8 @@ class TakeExamView(BaseView, FormView):
         if self.request.method == 'POST':
             formset = QuestionFormSet(self.request.POST)
         else:
-            queryset = Question.objects.filter(category=category)
-            # queryset = Question.objects.filter(category=category).order_by('?')[:exam.num_question]
+            # queryset = Question.objects.filter(category=category)
+            queryset = Question.objects.filter(category=category).order_by('?')[:exam.num_question]
             formset = QuestionFormSet(queryset=queryset)
         return formset
 
@@ -63,8 +66,14 @@ class TakeExamView(BaseView, FormView):
         return kwargs
 
     def form_valid(self, form):
+        total_correct = 0
         try:
-            total_correct = 0
+            exam = Exam.objects.get(id=self.kwargs['pk'])
+            message = self.request.POST.get('time_make_exam')
+            if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
+                return self.render_to_response(
+                    self.get_context_data(form=form, message="Time make exam is expired!"))
+
             for frm in form:
                 answer = Answer.objects.get(id=frm.cleaned_data['answer'])
                 if answer.correct:
@@ -74,6 +83,37 @@ class TakeExamView(BaseView, FormView):
 
         return self.render_to_response(self.get_context_data(form=form, total_correct=total_correct))
 
+    def form_invalid(self, form):
+        total_correct = 0
+        try:
+            exam = Exam.objects.get(id=self.kwargs['pk'])
+            message = self.request.POST.get('time_make_exam')
+            if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
+                return self.render_to_response(
+                    self.get_context_data(form=form, message="Time make exam is expired!"))
+
+            for frm in form:
+                if 'answer' in frm.cleaned_data:
+                    answer = Answer.objects.get(id=frm.cleaned_data['answer'])
+                    if answer.correct:
+                        total_correct = total_correct + 1
+        except:
+            print(traceback.format_exc())
+
+        return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
+
+    def check_valid_time(self, data, minute):
+        try:
+            parse_date = utils.decryption(data)
+            time_make_exam = datetime.strptime(parse_date, "%Y-%m-%d %H:%M:%S.%f")
+            cal_time = datetime.now() - timedelta(minutes=minute)
+            if cal_time <= time_make_exam:
+                return True
+            return False
+        except:
+            print(traceback.format_exc())
+            return False
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         info = {
@@ -82,6 +122,10 @@ class TakeExamView(BaseView, FormView):
             },
             'page_title': 'Take Example',
         }
+        if self.request.method == 'GET':
+            context['time_make_exam'] = utils.encryption(str(datetime.now()))
+        else:
+            context['time_make_exam'] = self.request.POST.get('time_make_exam')
         context.update(info)
         context['exam'] = Exam.objects.get(id=self.kwargs['pk'])
         return context

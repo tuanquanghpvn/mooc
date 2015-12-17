@@ -3,6 +3,11 @@
 
 {% block cssfiles %}
 <link rel="stylesheet" href="{% static 'frontend/wufooTheme2/css/form.css' %}" type="text/css"/>
+<style type="text/css">
+    form li {
+        padding: 0px;
+    }
+</style>
 {% endblock %}
 
 {% block related_subjects %}
@@ -12,19 +17,20 @@
 <!-- ==== BLOG START == -->
 <div class="col-sm-8">
     <h1>{{ exam.name }}</h1>
-    <hr>
-    {% if total_correct %}
-        <p class="text-danger">Total correct: {{ total_correct }} / {{ exam.num_question }}</p>
-    {% else %}
-        {% if form.errors %}
-        <p class="text-danger">Please choose all question !</p>
+
+    <div class="post">
+        {% if message %}
+            <span class="text-danger">{{ message }}</span>
+        {% else %}
+            {% if total_correct %}
+                <span class="text-danger">Total correct: {{ total_correct }} / {{ exam.num_question }}</span>
+            {% else %}
+                <span id="timer"></span>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 
     <form method="POST" action='' class="wufoo">
-        {% csrf_token %}
-        {{ form.management_form }}
-
         <ul>
             {% for frm in form %}
             <li>
@@ -42,13 +48,58 @@
                 {% endfor %}
             </li>
             {% endfor %}
-            <li class="buttons ">
-                <div>
-                    <input id="saveForm" name="saveForm" class="btTxt submit" value="Submit" type="submit">
-                </div>
-            </li>
+
+            {% if total_correct %}
+                <li style="margin-top: 10px;">
+                    <div>
+                        <a href="{% url 'exams:index' %}" class="btTxt btn btn-success submit">Back</a>
+                    </div>
+                </li>
+            {% else %}
+                {% csrf_token %}
+                {{ form.management_form }}
+                <input type="hidden" name="time_make_exam" value="{{ time_make_exam }}" />
+                <input type="hidden" name="minute" value="{{ exam.minute }}" />
+
+                <li style="margin-top: 10px;">
+                    <div>
+                        <input id="saveForm" name="saveForm" class="btTxt btn btn-success submit" value="Submit" type="submit">
+                    </div>
+                </li>
+            {% endif %}
         </ul>
     </form>
 </div>
 <!-- ==== BLOG END == -->
+{% endblock %}
+
+{% block jsfiles %}
+    <script type="text/javascript">
+        var count = {{ exam.minute }} * 60;
+        var counter = setInterval(timer, 1000); //1000 will  run it every 1 second
+
+        function townum(num) {
+            if (num < 10) {
+                return '0' + num;
+            } else {
+                return num;
+            }
+        }
+
+        function timer() {
+            count = count - 1;
+            if (count == -1) {
+                clearInterval(counter);
+                return;
+            }
+
+            var seconds = count % 60;
+            var minutes = Math.floor(count / 60);
+            var hours = Math.floor(minutes / 60);
+            minutes %= 60;
+            hours %= 60;
+
+            document.getElementById("timer").innerHTML = townum(hours) + ":" + townum(minutes) + ":" + townum(seconds); // watch for spelling
+        }
+    </script>
 {% endblock %}

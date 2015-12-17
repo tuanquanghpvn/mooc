@@ -188,7 +188,7 @@ class QuestionDeleteView(TeacherRequiredMixin, DeleteView):
 class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ('subject', 'name', 'category', 'description', 'num_question')
+        fields = ('subject', 'name', 'category', 'description', 'num_question', 'minute')
 
         widgets = {
             'category': forms.widgets.Select(
