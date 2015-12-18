@@ -353,7 +353,7 @@ class ExamDeleteView(TeacherRequiredMixin, DeleteView):
 
     def get(self, request, *args, **kwargs):
         object = self.get_object()
-        if request.user.is_superuser or object.creator.profile.user == request.user:
+        if request.user.is_superuser or object.teacher.profile.user == request.user:
             return self.post(request, *args, **kwargs)
         else:
             raise PermissionDenied

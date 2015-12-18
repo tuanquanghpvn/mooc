@@ -12,11 +12,10 @@ def get_youtube_id(link_youtube):
             '(youtube|youtu|youtube-nocookie)\.(com|be)/'
             '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
         )
-        print(link_youtube)
         youtube_regex_match = re.match(youtube_regex, link_youtube)
         if youtube_regex_match:
             return youtube_regex_match.group(6)
 
-        return 'fdsaa'
+        return ''
     except Exception:
-        return 'asds'
+        return ''

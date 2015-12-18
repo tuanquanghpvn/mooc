@@ -107,7 +107,7 @@ class TakeExamView(BaseView, FormView):
         except:
             print(traceback.format_exc())
 
-        return self.render_to_response(self.get_context_data(form=form, total_correct=total_correct))
+        return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
 
     def form_invalid(self, form):
         total_correct = 0
