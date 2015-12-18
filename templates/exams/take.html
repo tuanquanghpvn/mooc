@@ -7,6 +7,18 @@
     form li {
         padding: 0px;
     }
+
+    label:focus {
+        background: #00FF33;
+    }
+
+    .answer-success {
+        color: #00BB00;
+    }
+
+    .answer-error {
+        color: #FF0000;
+    }
 </style>
 {% endblock %}
 
@@ -16,19 +28,22 @@
 {% block content %}
 <!-- ==== BLOG START == -->
 <div class="col-sm-8">
-    <h1>{{ exam.name }}</h1>
+    <h1>
+        {{ exam.name }}
 
-    <div class="post">
-        {% if message %}
-            <span class="text-danger">{{ message }}</span>
-        {% else %}
-            {% if total_correct %}
-                <span class="text-danger">Total correct: {{ total_correct }} / {{ exam.num_question }}</span>
+        <div class="post pull-right">
+            {% if message %}
+                <span class="text-danger">{{ message }}</span>
             {% else %}
-                <span id="timer"></span>
+                {% if total_correct %}
+                    <span class="text-danger">Total correct: {{ total_correct }} / {{ exam.num_question }}</span>
+                {% else %}
+                    <span id="timer"></span>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    </div>
+        </div>
+    </h1>
+    <hr>
 
     <form method="POST" action='' class="wufoo">
         <ul>
@@ -42,16 +57,18 @@
 
                 {% for key, value in frm.fields.answer.choices %}
                 <div style="display: block;">
-                    {% if frm.type.value|upper == '1' %}
-                        <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
-                               id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
-                               name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>
-                    {% elif frm.type.value|upper == '2' %}
-                        <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
-                               id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
-                               name="form-{{ forloop.parentloop.counter0 }}-answer" type="checkbox" value="{{key}}"/>
-                    {% endif %}
-                    <label style="display: inline !important;" class="{% if key|upper in frm.answer.value|upper and total_correct and value.correct %} text-success {% elif key|upper in frm.answer.value|upper and total_correct and not value.correct %} text-danger {% endif %}">{{ value.content }}</label>
+                    <label style="display: inline !important;" class="{% if key|upper in frm.answer.value|upper and total_correct and value.correct %} answer-success {% elif key|upper in frm.answer.value|upper and total_correct and not value.correct %} answer-error {% endif %}">
+                        {% if frm.type.value|upper == '1' %}
+                            <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
+                                   id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
+                                   name="form-{{ forloop.parentloop.counter0 }}-answer" type="radio" value="{{key}}"/>
+                        {% elif frm.type.value|upper == '2' %}
+                            <input {% if key|upper in frm.answer.value|upper %} checked {% endif %}
+                                   id="id_form-{{ forloop.parentloop.counter0 }}-answer_{{ forloop.counter }}"
+                                   name="form-{{ forloop.parentloop.counter0 }}-answer" type="checkbox" value="{{key}}"/>
+                        {% endif %}
+                        {{ value.content }}
+                    </label>
                 </div>
                 {% endfor %}
             </li>
