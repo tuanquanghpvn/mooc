@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden
 from django.views.decorators.cache import cache_page
 from ars.categories.models import Category
 from ars.blog.models import Blog
-from ars.subjects.models import Subject
+from ars.subjects.models import Subject, Task
 from ars.comments.models import Comment
 
 
@@ -37,6 +37,7 @@ class BaseView(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super(BaseView, self).get_context_data(**kwargs)
         info = {
+            'list_lastest_task': Task.objects.order_by('-id')[:5],
             'list_lastest_post': Blog.objects.order_by('-id')[:5],
             'list_lastest_subject': Subject.objects.all()[:3],
             'list_popular_subject': Subject.objects.order_by('?')[:3],

@@ -1,5 +1,7 @@
 {% load staticfiles %}
 {% load cache %}
+{% load subjects_tag %}
+
 <!DOCTYPE html>
 <html>
 
@@ -146,13 +148,31 @@
                         </div>-->
                         <!-- ==== NEWSLETTER END == -->
 
+                        <!-- ==== LATEST TASK START == -->
+                        <div class="widget" data-scroll-reveal>
+                            <h3>Latest tasks</h3>
+                            {% for task in list_lastest_task %}
+                                <div class="post row">
+                                    <div class="col-md-4">
+                                        <a href="#">
+                                            <img class="img-responsive" width="100%" src="https://i.ytimg.com/vi/{{ task.link_youtube|get_youtube_id }}/mqdefault.jpg">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h5><a href="{% url 'subjects:task' task.id %}">{{ task }}</a></h5>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <!-- ==== LATEST POSTS END == -->
+
                         <!-- ==== LATEST POSTS START == -->
                         <div class="widget" data-scroll-reveal>
                             <h3>Latest posts</h3>
                             {% for blog in list_lastest_post %}
                                 <div class="post row">
                                     <div class="col-md-4">
-                                        <a href="#"><img src="{{ blog.get_image_url }}" alt="" class="img-responsive" /></a>
+                                        <a href="{% url 'blog:detail' blog.pk blog.slug %}"><img src="{{ blog.get_image_url }}" alt="" class="img-responsive" /></a>
                                     </div>
                                     <div class="col-md-8">
                                         <h5><a href="{% url 'blog:detail' blog.pk blog.slug %}">{{ blog }}</a></h5>
