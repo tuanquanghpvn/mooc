@@ -225,7 +225,7 @@ class QuestionUpdateView(TeacherRequiredMixin, UpdateView):
         try:
             with transaction.atomic():
                 form.save()
-                formset = AnswerUpdateFormSet(self.request.POST, queryset=Answer.objects.filter(question=self.object))
+                formset = AnswerUpdateFormSet(self.request.POST)
                 if formset.is_valid():
                     formset.save()
         except:

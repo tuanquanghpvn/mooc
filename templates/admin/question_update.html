@@ -66,6 +66,7 @@
 
                             {{ formset.management_form }}
                             {% for frm in formset %}
+                            {{ frm.id }}
                             <div class="form-group {% if frm.content.errors %} has-error {% endif %}">
                                 <label>Answer {{ forloop.counter }}: {{ frm.correct }}</label>
                                 {{ frm.content }}
