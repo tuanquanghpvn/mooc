@@ -119,11 +119,11 @@ class TakeExamView(BaseView, FormView):
                     self.get_context_data(form=form, message="Time make exam is expired!"))
 
             for frm in form:
-                if frm.cleaned_data['type'] == 1:
+                if frm.cleaned_data['type'] == 1 and 'answer' in frm.cleaned_data:
                     answer = Answer.objects.get(id=frm.cleaned_data['answer'])
                     if answer.correct:
                         total_correct = total_correct + 1
-                elif frm.cleaned_data['type'] == 2:
+                elif frm.cleaned_data['type'] == 2 and 'answer' in frm.cleaned_data:
                     list_answer = frm.cleaned_data['answer']
                     question = frm.cleaned_data['id']
                     count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
