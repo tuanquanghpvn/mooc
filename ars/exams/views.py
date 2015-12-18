@@ -27,9 +27,10 @@ class ListExamView(BaseView, ListView):
         return context
 
 
-QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content', 'type', 'level'),
+QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content', 'type', 'level', 'code'),
                                            widgets={'id': forms.HiddenInput,
                                                     'content': forms.HiddenInput,
+                                                    'code': forms.HiddenInput,
                                                     'type': forms.HiddenInput,
                                                     'level': forms.HiddenInput},
                                            extra=0)

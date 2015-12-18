@@ -29,7 +29,8 @@ class Question(Timestampable):
 
     teacher = models.ForeignKey(Teacher)
     group = models.ForeignKey(Group)
-    content = models.CharField(max_length=255)
+    content = models.CharField(max_length=500)
+    code = models.TextField(blank=True, default='')
     level = models.IntegerField(choices=CHOICE_LEVEL, default=1)
     type = models.IntegerField(choices=CHOICE_QUESTION, default=1)
 

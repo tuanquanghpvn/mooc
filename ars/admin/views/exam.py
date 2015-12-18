@@ -87,7 +87,7 @@ class GroupDeleteView(AdminRequiredMixin, DeleteView):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ('content', 'group', 'level', 'type')
+        fields = ('content', 'code', 'group', 'level', 'type')
 
         widgets = {
             'group': forms.widgets.Select(

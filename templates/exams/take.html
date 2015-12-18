@@ -19,6 +19,12 @@
     .answer-error {
         color: #FF0000;
     }
+
+    .wufoo li {
+        font-size: 18px;
+        width: 100%;
+        padding-bottom: 15px;
+    }
 </style>
 {% endblock %}
 
@@ -51,9 +57,16 @@
             <li>
                 {{ frm.id }}
                 {{ frm.content }}
+                {{ frm.code }}
                 {{ frm.type }}
                 {{ frm.level }}
                 <label class="desc">{{ forloop.counter }}. {{ frm.content.value }}</label>
+
+
+
+                {% if frm.code.value %}
+                    <pre id="tmpId">{{ frm.code.value|safe }}</pre>
+                {% endif %}
 
                 {% for key, value in frm.fields.answer.choices %}
                 <div style="display: block;">

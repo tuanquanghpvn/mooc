@@ -34,6 +34,7 @@
                                 <th>Group</th>
                                 <th>Type</th>
                                 <th>Level</th>
+                                <th>Question</th>
                                 <th class="text-center" style="width: 200px">Action</th>
                             </tr>
                             {% for item in list_question %}
@@ -42,7 +43,7 @@
                                     <td>{{ item.group }}</td>
                                     <td>{{ item.get_type_display }}</td>
                                     <td>{{ item.get_level_display }}</td>
-                                    <td>{{ item.content }}</td>
+                                    <td>{{ item.content|truncatechars:150 }}</td>
                                     <td class="text-center">
                                         <a href="{% url 'admin:update_question' item.id %}">
                                             <span class="badge">Update</span>
