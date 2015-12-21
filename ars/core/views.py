@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 from ars.categories.models import Category
 from ars.blog.models import Blog
 from ars.subjects.models import Subject, Task
-from ars.comments.models import Comment
+from ars.reviews.models import Review
 
 
 class LoginRequiredMixin(object):
@@ -42,7 +42,7 @@ class BaseView(ContextMixin):
             'list_lastest_subject': Subject.objects.all()[:3],
             'list_popular_subject': Subject.objects.order_by('?')[:3],
             'list_category': Category.objects.all(),
-            'list_latest_comment': Comment.objects.order_by('-id')[:3]
+            'list_latest_review': Review.objects.order_by('-id')[:3]
         }
         context.update(info)
         return context

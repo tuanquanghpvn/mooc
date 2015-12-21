@@ -277,12 +277,12 @@
                 <!-- ==== POPULAR COURSES END == -->
                 <!-- ==== LATEST COMMENTS START == -->
                 <div class="col-sm-3">
-                    <h3>Latest Comments</h3>
+                    <h3>Latest Review</h3>
                     <ul>
-                        {% for comment in list_latest_comment %}
+                        {% for review in list_latest_review %}
                         <li>
-                            <p><a href="blog-article-right-sidebar.html">{{ comment.content|truncatewords:19 }}</a></p>
-                            <p class="author"><a href="#">by {{ comment.profile.user.username }}</a>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>{{ comment.create_date|date:'D d M Y' }}</em></p>
+                            <p><a href="{% url 'subjects:detail' review.subject.id %}">{{ review.content|truncatewords:19 }}</a></p>
+                            <p class="author"><a href="#">by {{ review.student.profile.user.username }}</a>, &nbsp;&nbsp;<em>{{ review.created_date|date:'D d M Y' }}</em></p>
                         </li>
                         {% endfor %}
                     </ul>
