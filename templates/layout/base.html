@@ -36,8 +36,8 @@
         <div class="tools">
             <div class="container">
                 <ul class="pull-left">
-                    <!--<li><a href="tel:0918612485"><i class="fa fa-phone"></i><span>091.861.2485</span></a></li>-->
-                    <!--<li><a href="mailto:khanhnn@pythonvietnam.info"><i class="fa fa-envelope"></i><span>khanhnn@pythonvietnam.info</span></a></li>-->
+                    <li><a href="tel:0918612485"><i class="fa fa-phone"></i><span>091.861.2485</span></a></li>
+                    <li><a href="mailto:khanhnn@pythonvietnam.info"><i class="fa fa-envelope"></i><span>khanhnn@pythonvietnam.info</span></a></li>
                 </ul>
                 <nav class="pull-right">
                     {% if user.is_authenticated %}
@@ -64,7 +64,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <!--<a href="{% url 'home' %}" class="navbar-brand"><img style="margin-top: 10px;" src="{% static 'frontend/images/logo.png' %}" alt="Course Bridge - Python Viet Nam" class="img-responsive logo" /></a>-->
+                    <a href="{% url 'home' %}" class="navbar-brand"><img style="margin-top: 10px;" src="{% static 'frontend/images/logo.png' %}" alt="Course Bridge - Python Viet Nam" class="img-responsive logo" /></a>
                 </div>
                 <nav class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -278,7 +278,6 @@
                 <!-- ==== LATEST COMMENTS START == -->
                 <div class="col-sm-3">
                     <h3>Latest Comments</h3>
-                    {% if list_latest_comment %}
                     <ul>
                         {% for comment in list_latest_comment %}
                         <li>
@@ -287,7 +286,6 @@
                         </li>
                         {% endfor %}
                     </ul>
-                    {% endif %}
                 </div>
                 <!-- ==== LATEST COMMENTS END == -->
             </div>

@@ -275,15 +275,21 @@ class ExamForm(forms.ModelForm):
                        'style': 'width: 100%;', 'placeholder': 'Enter level'}),
         }
 
-    def clean(self):
-        cleaned_data = super(ExamForm, self).clean()
-        group = cleaned_data.get('group', None)
-        num_question = cleaned_data.get('num_question', 0)
-        count = Question.objects.filter(group=group).count()
-        if count == 0 and group:
-            self.add_error('group', "You don't have question in category selected!")
-        elif count < num_question:
-            self.add_error('group', "You need more " + num_question + " question in group!")
+    # def clean(self):
+    #     cleaned_data = super(ExamForm, self).clean()
+    #     group = cleaned_data.get('group', None)
+    #     num_question = cleaned_data.get('num_question', 0)
+    #     fill = cleaned_data.get('fill', False)
+    #
+    #     if fill:
+    #         count = Question.objects.filter(group=group).count()
+    #     else:
+    #         count = Question.objects.filter(group=group, teacher__profile__user=self.request.user).count()
+    #
+    #     if count == 0 and group:
+    #         self.add_error('group', "You don't have question in category selected!")
+    #     elif count < num_question:
+    #         self.add_error('group', "You need more " + num_question + " question in group!")
 
 
 class ExamView(TeacherRequiredMixin, ListView):
