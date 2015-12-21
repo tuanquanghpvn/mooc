@@ -48,10 +48,18 @@ class Answer(models.Model):
 
 
 class Exam(Describable, Timestampable):
+    CHOICE_LEVEL = (
+        (1, 'Level 1'),
+        (2, 'Level 2'),
+        (3, 'Level 3')
+    )
+
     teacher = models.ForeignKey(Teacher)
     group = models.ForeignKey(Group)
     num_question = models.IntegerField()
     minute = models.IntegerField()
+    level = models.IntegerField(choices=CHOICE_LEVEL, default=1)
+    fill = models.BooleanField(blank=False, default=False)
     image = models.ImageField(upload_to=settings.EXAM_DIR, max_length=255, default='', blank=False)
 
     def get_image_url(self):

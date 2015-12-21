@@ -27,12 +27,11 @@ class ListExamView(BaseView, ListView):
         return context
 
 
-QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content', 'type', 'level', 'code'),
+QuestionFormsetBase = modelformset_factory(Question, fields=('id', 'content', 'type', 'code'),
                                            widgets={'id': forms.HiddenInput,
                                                     'content': forms.HiddenInput,
                                                     'code': forms.HiddenInput,
-                                                    'type': forms.HiddenInput,
-                                                    'level': forms.HiddenInput},
+                                                    'type': forms.HiddenInput},
                                            extra=0)
 AnswerFormSet = modelformset_factory(Answer, fields=('id', 'content',), widgets={'id': forms.HiddenInput}, extra=0)
 
@@ -40,7 +39,7 @@ AnswerFormSet = modelformset_factory(Answer, fields=('id', 'content',), widgets=
 class QuestionFormSet(QuestionFormsetBase):
     def add_fields(self, form, index):
         super(QuestionFormSet, self).add_fields(form, index)
-        answer = Answer.objects.filter(question__id=form.initial['id'], question__level__lte=form.initial['level'])
+        answer = Answer.objects.filter(question__id=form.initial['id'])
         answer = [(x.id, x) for x in answer]
 
         # One choice
@@ -56,89 +55,130 @@ class QuestionFormSet(QuestionFormsetBase):
 
 class TakeExamView(BaseView, FormView):
     template_name = 'exams/take.html'
+    exam = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.exam = Exam.objects.get(id=self.kwargs['pk'])
+        return super(TakeExamView, self).dispatch(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
-        exam = Exam.objects.get(id=self.kwargs['pk'])
+        exam = self.exam
         group = exam.group
         if self.request.method == 'POST':
             formset = QuestionFormSet(self.request.POST)
         else:
-            # queryset = Question.objects.filter(group=group)
-            queryset = Question.objects.filter(group=group, teacher=exam.teacher).order_by('?')[
-                       :exam.num_question]
+            if exam.fill:
+                queryset = Question.objects.filter(group=group, level__lte=exam.level).order_by('?')[:exam.num_question]
+            else:
+                queryset = Question.objects.filter(group=group, level__lte=exam.level, teacher=exam.teacher).order_by(
+                    '?')[:exam.num_question]
             formset = QuestionFormSet(queryset=queryset)
         return formset
 
-    def get_form_kwargs(self):
-        exam = Exam.objects.get(id=self.kwargs['pk'])
-        group = exam.group
-        queryset = Question.objects.filter(group=group, teacher=exam.teacher)[:exam.num_question]
-        kwargs = super().get_form_kwargs()
-        kwargs['data'] = self.request.POST
-        kwargs['queryset'] = queryset
-        return kwargs
+    # def get_form_kwargs(self):
+    #     exam = Exam.objects.get(id=self.kwargs['pk'])
+    #     group = exam.group
+    #     queryset = Question.objects.filter(group=group, teacher=exam.teacher)[:exam.num_question]
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['data'] = self.request.POST
+    #     kwargs['queryset'] = queryset
+    #     return kwargs
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
         total_correct = 0
         try:
-            exam = Exam.objects.get(id=self.kwargs['pk'])
+            exam = self.exam
             message = self.request.POST.get('time_make_exam')
             if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
                 return self.render_to_response(
                     self.get_context_data(form=form, message="Time make exam is expired!"))
 
             for frm in form:
-                if frm.cleaned_data['type'] == 1:
-                    answer = Answer.objects.get(id=frm.cleaned_data['answer'])
-                    if answer.correct:
-                        total_correct = total_correct + 1
-                elif frm.cleaned_data['type'] == 2:
-                    list_answer = frm.cleaned_data['answer']
-                    question = frm.cleaned_data['id']
-                    count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
-                    if len(list_answer) == count_question_correct:
-                        success = True
-                        for answer_check in list_answer:
-                            answer_data = Answer.objects.get(id=answer_check)
-                            if not answer_data.correct:
-                                success = False
-                        if success:
+                if frm.is_valid():
+                    if frm.cleaned_data['type'] == 1:
+                        answer = Answer.objects.get(id=frm.cleaned_data['answer'])
+                        if answer.correct:
                             total_correct = total_correct + 1
+                    elif frm.cleaned_data['type'] == 2:
+                        question = frm.cleaned_data['id']
+                        list_answer = frm.cleaned_data['answer']
+                        count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
+
+                        if len(list_answer) == count_question_correct:
+                            success = True
+                            for answer_check in list_answer:
+                                answer_data = Answer.objects.get(id=answer_check)
+                                if not answer_data.correct:
+                                    success = False
+                            if success:
+                                total_correct = total_correct + 1
         except:
             print(traceback.format_exc())
 
         return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
 
-    def form_invalid(self, form):
-        total_correct = 0
-        try:
-            exam = Exam.objects.get(id=self.kwargs['pk'])
-            message = self.request.POST.get('time_make_exam')
-            if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
-                return self.render_to_response(
-                    self.get_context_data(form=form, message="Time make exam is expired!"))
-
-            for frm in form:
-                if frm.cleaned_data['type'] == 1 and 'answer' in frm.cleaned_data:
-                    answer = Answer.objects.get(id=frm.cleaned_data['answer'])
-                    if answer.correct:
-                        total_correct = total_correct + 1
-                elif frm.cleaned_data['type'] == 2 and 'answer' in frm.cleaned_data:
-                    list_answer = frm.cleaned_data['answer']
-                    question = frm.cleaned_data['id']
-                    count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
-                    if len(list_answer) == count_question_correct:
-                        success = True
-                        for answer_check in list_answer:
-                            answer_data = Answer.objects.get(id=answer_check)
-                            if not answer_data.correct:
-                                success = False
-                        if success:
-                            total_correct = total_correct + 1
-        except:
-            print(traceback.format_exc())
-
-        return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
+    # def form_valid(self, form):
+    #     total_correct = 0
+    #     try:
+    #         exam = Exam.objects.get(id=self.kwargs['pk'])
+    #         message = self.request.POST.get('time_make_exam')
+    #         if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
+    #             return self.render_to_response(
+    #                 self.get_context_data(form=form, message="Time make exam is expired!"))
+    #
+    #         for frm in form:
+    #             if frm.cleaned_data['type'] == 1:
+    #                 answer = Answer.objects.get(id=frm.cleaned_data['answer'])
+    #                 if answer.correct:
+    #                     total_correct = total_correct + 1
+    #             elif frm.cleaned_data['type'] == 2:
+    #                 list_answer = frm.cleaned_data['answer']
+    #                 question = frm.cleaned_data['id']
+    #                 count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
+    #                 if len(list_answer) == count_question_correct:
+    #                     success = True
+    #                     for answer_check in list_answer:
+    #                         answer_data = Answer.objects.get(id=answer_check)
+    #                         if not answer_data.correct:
+    #                             success = False
+    #                     if success:
+    #                         total_correct = total_correct + 1
+    #     except:
+    #         print(traceback.format_exc())
+    #
+    #     return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
+    #
+    # def form_invalid(self, form):
+    #     total_correct = 0
+    #     try:
+    #         exam = Exam.objects.get(id=self.kwargs['pk'])
+    #         message = self.request.POST.get('time_make_exam')
+    #         if exam.minute != 0 and not self.check_valid_time(message, exam.minute):
+    #             return self.render_to_response(
+    #                 self.get_context_data(form=form, message="Time make exam is expired!"))
+    #
+    #         for frm in form:
+    #             if frm.cleaned_data['type'] == 1 and 'answer' in frm.cleaned_data:
+    #                 answer = Answer.objects.get(id=frm.cleaned_data['answer'])
+    #                 if answer.correct:
+    #                     total_correct = total_correct + 1
+    #             elif frm.cleaned_data['type'] == 2 and 'answer' in frm.cleaned_data:
+    #                 list_answer = frm.cleaned_data['answer']
+    #                 question = frm.cleaned_data['id']
+    #                 count_question_correct = Answer.objects.filter(question=question).filter(correct=True).count()
+    #                 if len(list_answer) == count_question_correct:
+    #                     success = True
+    #                     for answer_check in list_answer:
+    #                         answer_data = Answer.objects.get(id=answer_check)
+    #                         if not answer_data.correct:
+    #                             success = False
+    #                     if success:
+    #                         total_correct = total_correct + 1
+    #     except:
+    #         print(traceback.format_exc())
+    #
+    #     return self.render_to_response(self.get_context_data(form=form, total_correct=str(total_correct)))
 
     def check_valid_time(self, data, minute):
         try:
@@ -165,7 +205,7 @@ class TakeExamView(BaseView, FormView):
         else:
             context['time_make_exam'] = self.request.POST.get('time_make_exam')
         context.update(info)
-        context['exam'] = Exam.objects.get(id=self.kwargs['pk'])
+        context['exam'] = self.exam
         return context
 
     def get_success_url(self):

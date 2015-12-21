@@ -260,24 +260,30 @@ class QuestionDeleteView(TeacherRequiredMixin, DeleteView):
 # Exam Management
 
 class ExamForm(forms.ModelForm):
+    fill = forms.BooleanField(required=False)
+
     class Meta:
         model = Exam
-        fields = ('name', 'group', 'description', 'num_question', 'minute')
+        fields = ('name', 'group', 'description', 'num_question', 'minute', 'level', 'fill')
 
         widgets = {
             'group': forms.widgets.Select(
                 attrs={'class': 'form-control select2',
                        'style': 'width: 100%;', 'placeholder': 'Enter category'}),
+            'level': forms.widgets.Select(
+                attrs={'class': 'form-control select2',
+                       'style': 'width: 100%;', 'placeholder': 'Enter level'}),
         }
 
     def clean(self):
         cleaned_data = super(ExamForm, self).clean()
         group = cleaned_data.get('group', None)
+        num_question = cleaned_data.get('num_question', 0)
         count = Question.objects.filter(group=group).count()
         if count == 0 and group:
             self.add_error('group', "You don't have question in category selected!")
-            # elif count < 10:
-            #     self.add_error('group', "You need more 10 question in group!")
+        elif count < num_question:
+            self.add_error('group', "You need more " + num_question + " question in group!")
 
 
 class ExamView(TeacherRequiredMixin, ListView):
@@ -321,6 +327,9 @@ class ExamCreateView(TeacherRequiredMixin, CreateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.teacher = self.request.user.profile.teacher
+        if self.request.user.is_superuser:
+            fill = self.request.POST.get('fill', False)
+            instance.fill = fill
         instance.save()
         return super(ExamCreateView, self).form_valid(form)
 
@@ -342,6 +351,14 @@ class ExamUpdateView(TeacherRequiredMixin, UpdateView):
         }
         context['info'] = info
         return context
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        if self.request.user.is_superuser:
+            fill = self.request.POST.get('fill', False)
+            instance.fill = fill
+        instance.save()
+        return super(ExamUpdateView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('admin:list_exam')
