@@ -65,7 +65,7 @@ class Exam(Describable, Timestampable):
     def get_image_url(self):
         if self.image:
             return self.image.url
-        return settings.DEFAULT_IMAGE
+        return settings.DEFAULT_EXAMPLE
 
     class Meta:
         db_table = 'exam'
